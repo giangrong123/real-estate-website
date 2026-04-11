@@ -1,0 +1,20 @@
+.card {
+  display: flex;
+  gap: 20px;
+  background: white;
+  padding: 18px;
+  border-radius: 18px;
+  margin-bottom: 20px;
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.card img {
+  width: 220px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 12px;
+}

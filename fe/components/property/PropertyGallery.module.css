@@ -1,0 +1,67 @@
+/* ===================== */
+/* GALLERY */
+/* ===================== */
+.gallery {
+  background: #fff;
+  padding: 16px;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+}
+
+/* Ảnh lớn */
+.main {
+  width: 100%;
+  height: 440px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
+/* Thumbnail strip */
+.thumbs {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.thumbs::-webkit-scrollbar {
+  height: 6px;
+}
+
+.thumbs::-webkit-scrollbar-thumb {
+  background: #ddd;
+  border-radius: 10px;
+}
+
+.thumbs img {
+  width: 90px;
+  height: 68px;
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
+  opacity: 0.6;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.thumbs img:hover {
+  opacity: 1;
+}
+
+.active {
+  opacity: 1;
+  border-color: #e53935;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .main {
+    height: 260px;
+  }
+
+  .thumbs img {
+    width: 72px;
+    height: 54px;
+  }
+}

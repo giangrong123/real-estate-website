@@ -1,0 +1,73 @@
+.searchBox {
+  /* background: #ffffff; */
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* tabs */
+.tabs {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+  align-items: center;
+  justify-content: center;
+}
+
+.tabs button {
+  background: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  /* color: #555; */
+  color: white;
+}
+
+.tabs .active {
+  color: #e03c31;
+  font-weight: 600;
+  border-bottom: 2px solid #e03c31;
+  padding-bottom: 4px;
+}
+
+/* form */
+.form {
+  display: flex;
+  gap: 12px;
+}
+
+.form input {
+  flex: 1;
+  height: 44px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  padding: 0 12px;
+  font-size: 14px;
+}
+
+.form button {
+  height: 44px;
+  padding: 0 24px;
+  background: #e03c31;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.form button:hover {
+  background: #c93329;
+}
+
+/* mobile */
+@media (max-width: 768px) {
+  .form {
+    flex-direction: column;
+  }
+
+  .overlay {
+    bottom: 40px;
+  }
+}

@@ -1,0 +1,54 @@
+.container {
+  max-width: 1200px;
+  margin: 80px auto;
+  padding: 0 16px;
+
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 48px;
+  border-top: 1px solid #F2F2F2;
+
+}
+
+.item {
+  text-align: center;
+}
+
+/* ICON */
+.icon {
+  width: 160px;
+  height: auto;
+  margin-bottom: 24px;
+  margin: auto;
+  margin-bottom: 18px;
+}
+
+/* TITLE */
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #2c2c2c;
+  margin-bottom: 16px;
+}
+
+/* DESCRIPTION */
+.desc {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #555;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    grid-template-columns: 1fr;
+    gap: 56px;
+  }
+
+  .icon {
+    width: 130px;
+  }
+}

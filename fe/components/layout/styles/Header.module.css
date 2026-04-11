@@ -1,0 +1,175 @@
+/* HEADER */
+.header {
+  width: 100%;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.container {
+  width: 1200px;
+  max-width: 92%;
+  margin: auto;
+  height: 70px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* LOGO */
+.logo img {
+  height: 36px;
+}
+
+/* NAV */
+.nav ul {
+  list-style: none;
+  display: flex;
+  gap: 30px;
+}
+
+/* LINK STYLE */
+.navLink {
+  position: relative;
+  padding: 8px 12px;
+  border-radius: 6px;
+  color: #333;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+
+  transition: color 0.25s ease, background 0.25s ease;
+}
+
+/* UNDERLINE */
+.navLink::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  width: 100%;
+  height: 2px;
+  background: #e53935;
+
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+/* HOVER */
+.navLink:hover {
+  color: #e53935;
+}
+
+.navLink:hover::after {
+  transform: scaleX(1);
+}
+
+/* ACTIVE */
+.active {
+  color: #e53935;
+  background: rgba(229, 57, 53, 0.08);
+}
+
+.active::after {
+  transform: scaleX(1);
+}
+
+/* ACTION BUTTONS */
+.actions {
+  display: flex;
+  gap: 15px;
+}
+
+.btnOutline {
+  padding: 8px 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 13px;
+  text-decoration: none;
+  color: #333;
+}
+
+.btnPrimary {
+  padding: 8px 14px;
+  border: 1px solid #e53935;
+  color: #e53935;
+  border-radius: 4px;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.btnPost {
+  padding: 8px 16px;
+  background: #e53935;
+  color: #fff;
+  border-radius: 4px;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.btnPost:hover {
+  background: #c62828;
+}
+
+/* MOBILE */
+.menuToggle {
+  display: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.mobileAuth {
+  display: none;
+}
+
+/* RESPONSIVE */
+@media (max-width: 992px) {
+  .menuToggle {
+    display: block;
+  }
+
+  .actions {
+    display: none;
+  }
+
+  .nav {
+    position: fixed;
+    top: 70px;
+    right: 0;
+    width: 70%;
+    background: #fff;
+
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+
+    padding: 20px;
+  }
+
+  .activeNav {
+    transform: translateX(0);
+  }
+
+  .nav ul {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .mobileAuth {
+    display: grid;
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  .btnOutline,
+  .btnPrimary,
+  .btnPost {
+    width: 100%;
+    text-align: center;
+    padding: 10px 0;
+    border-radius: 6px;
+  }
+}

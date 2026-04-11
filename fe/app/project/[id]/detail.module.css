@@ -1,0 +1,164 @@
+/* ================= WRAPPER ================= */
+.wrapper {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+/* ================= LAYOUT ================= */
+.layout {
+  display: block;
+}
+
+/* ================= LEFT CARD ================= */
+.left {
+  background: #fff;
+  padding: 28px;
+  border-radius: 16px;
+
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.05),
+    0 8px 16px rgba(0, 0, 0, 0.04);
+}
+
+/* ================= IMAGE ================= */
+.imageWrapper {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.thumbnail {
+  width: 100%;
+  height: 420px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.imageWrapper:hover .thumbnail {
+  transform: scale(1.04);
+}
+
+/* ================= BADGES ================= */
+.status {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  background: #e53935;
+  color: #fff;
+  padding: 6px 12px;
+  font-size: 13px;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.approved {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: #2e7d32;
+  color: #fff;
+  padding: 6px 12px;
+  font-size: 13px;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+/* ================= TITLE ================= */
+.title {
+  margin-top: 24px;
+  font-size: 28px;
+  font-weight: 700;
+  color: #222;
+}
+
+.address {
+  margin-top: 8px;
+  color: #666;
+  font-size: 15px;
+}
+
+/* ================= STATS ================= */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin-top: 24px;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.stats > div {
+  padding: 18px;
+  border-right: 1px solid #eee;
+}
+
+.stats > div:last-child {
+  border-right: none;
+}
+
+.stats span {
+  font-size: 13px;
+  color: #777;
+}
+
+.stats b {
+  display: block;
+  margin-top: 6px;
+  font-size: 15px;
+  color: #222;
+}
+
+/* ================= SECTION ================= */
+.section {
+  margin-top: 36px;
+}
+
+.section h2 {
+  font-size: 20px;
+  margin-bottom: 14px;
+  color: #222;
+}
+
+.section p {
+  color: #444;
+  line-height: 1.8;
+}
+
+.section ul {
+  padding-left: 18px;
+}
+
+.section li {
+  margin-bottom: 8px;
+  color: #444;
+}
+
+/* ================= FOOTER TEXT ================= */
+.text {
+  margin-top: 40px;
+  font-size: 13px;
+  color: #777;
+  line-height: 1.6;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 992px) {
+  .thumbnail {
+    height: 260px;
+  }
+
+  .stats {
+    grid-template-columns: 1fr;
+  }
+
+  .stats > div {
+    border-right: none;
+    border-bottom: 1px solid #eee;
+  }
+
+  .stats > div:last-child {
+    border-bottom: none;
+  }
+}

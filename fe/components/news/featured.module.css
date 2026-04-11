@@ -1,0 +1,18 @@
+.featured {
+  height: 420px;
+  border-radius: 24px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  margin-bottom: 40px;
+  overflow: hidden;
+}
+
+.overlay {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 30px;
+  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+  color: white;
+}

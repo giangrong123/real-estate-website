@@ -1,0 +1,20 @@
+/* Wrapper của trang */
+.wrapper {
+  padding: 24px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* Tiêu đề */
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 24px 0;
+}
+
+/* Danh sách BĐS – LIST VIEW */
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}

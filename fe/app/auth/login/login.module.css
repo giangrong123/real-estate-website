@@ -1,0 +1,133 @@
+.wrapper {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f5f5f5;
+  padding: 16px;
+  background: linear-gradient(135deg, #f5f5f5, #ffe5e5);
+}
+
+/* CARD */
+.card {
+  width: 100%;
+  max-width: 900px;
+  min-height: 520px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: #fff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+}
+
+/* LEFT IMAGE */
+.imageBox {
+  background: url("https://th.bing.com/th/id/R.569d824c62b5e27c43ff041df48a2644?rik=L64C40p8dTjwmQ&pid=ImgRaw&r=0") center/cover no-repeat;
+  position: relative;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  color: white;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.overlay h2 {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.overlay p {
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+/* RIGHT FORM */
+.formBox {
+  padding: 48px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.formBox h1 {
+  color: #c62828;
+  font-size: 28px;
+  margin-bottom: 24px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.form input {
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+}
+
+.form input:focus {
+  outline: none;
+  border-color: #e53935;
+}
+
+.form button {
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  background: #e53935;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.form button:hover {
+  background: #c62828;
+}
+
+.switch {
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.switch a {
+  color: #e53935;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* 📱 RESPONSIVE */
+@media (max-width: 768px) {
+  .card {
+    grid-template-columns: 1fr;
+  }
+
+  .imageBox {
+    display: none;
+  }
+
+  .formBox {
+    padding: 32px 24px;
+  }
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.error {
+  color: #e03c31;
+  font-size: 13px;
+}

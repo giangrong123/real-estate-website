@@ -1,0 +1,60 @@
+/* ===== WRAPPER ===== */
+.wrapper {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: 100vh;
+  background: #f5f7fb;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+  background: #ffffff;
+  padding: 30px 20px;
+  border-right: 1px solid #e5e7eb;
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* LOGO / TITLE */
+.sidebar h2 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 30px;
+  color: #111827;
+}
+
+/* ===== NAV ===== */
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* LINK */
+.sidebar nav a {
+  text-decoration: none;
+  color: #374151;
+  font-size: 15px;
+  padding: 10px 14px;
+  border-radius: 10px;
+
+  transition: all 0.2s ease;
+}
+
+/* HOVER */
+.sidebar nav a:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+/* ACTIVE (sau này có thể thêm class active) */
+.active {
+  background: #2563eb;
+  color: white !important;
+}
+
+/* ===== CONTENT ===== */
+.content {
+  padding: 40px;
+}

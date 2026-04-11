@@ -1,0 +1,173 @@
+.footer {
+  background: #f5f5f5;
+  padding: 60px 0 30px;
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+
+/* CONTAINER */
+.container {
+  width: 1200px;
+  max-width: 92%;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  gap: 60px;
+}
+
+/* LEFT */
+.left {
+  flex: 1;
+}
+
+.logo {
+  width: 180px;
+  margin-bottom: 20px;
+}
+
+.company {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.left p {
+  font-size: 14px;
+  color: #666;
+  margin: 6px 0;
+}
+
+/* RIGHT */
+.right {
+  flex: 1.2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.box {
+  min-width: 180px;
+}
+
+.box h4 {
+  font-size: 15px;
+  margin-bottom: 8px;
+}
+
+.box p {
+  font-size: 14px;
+  color: #666;
+}
+
+.highlight {
+  font-size: 18px;
+  font-weight: bold;
+  color: #e53935;
+}
+
+/* SUBSCRIBE */
+.subscribe {
+  width: 100%;
+}
+
+.subscribeBox {
+  display: flex;
+  margin-top: 10px;
+}
+
+.subscribeBox input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-right: none;
+  border-radius: 4px 0 0 4px;
+  font-size: 14px;
+}
+
+.subscribeBox button {
+  padding: 10px 20px;
+  border: none;
+  background: #e53935;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 0 4px 4px 0;
+  transition: 0.3s;
+}
+
+.subscribeBox button:hover {
+  background: #c62828;
+}
+
+/* BOTTOM */
+.bottom {
+  margin-top: 50px;
+  padding-top: 20px;
+  border-top: 1px solid #ddd;
+  width: 1200px;
+  max-width: 92%;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+  font-size: 13px;
+  color: #777;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 992px) {
+
+  .container {
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .right {
+    flex-direction: column;
+  }
+
+  .bottom {
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 576px) {
+
+  .footer {
+    padding: 40px 0 20px;
+  }
+
+  .logo {
+    width: 140px;
+  }
+
+  .company {
+    font-size: 14px;
+  }
+
+  .left p,
+  .box p {
+    font-size: 13px;
+  }
+
+  .highlight {
+    font-size: 16px;
+  }
+
+  .subscribeBox {
+    flex-direction: column;
+  }
+
+  .subscribeBox input {
+    border-radius: 4px;
+    border-right: 1px solid #ccc;
+    margin-bottom: 10px;
+  }
+
+  .subscribeBox button {
+    border-radius: 4px;
+  }
+}
