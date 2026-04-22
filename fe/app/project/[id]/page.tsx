@@ -4,19 +4,23 @@ import { USERS_DATA } from "@/data/users";
 import styles from "./detail.module.css";
 import HomeProject from "@/components/home/HomeProject";
 
+//định nghĩa kiểu của biến
 type Props = {
   params: Promise<{
     id: string;
   }>;
 };
 
+//fucion này cho ở đâu cũng đc vì nó chỉ là hàm fotmaddate
 const formatDate = (date: string) =>
   new Date(date).toLocaleDateString("vi-VN");
 
-export default async function ProjectDetailPage({ params }: Props) {
+//nen viet theo arrow function tranh viet han funciton ra
+const ProjectDetailPage = async ({ params }: Props) => {
   // ✅ Next 15 bắt buộc await params
   const { id } = await params;
 
+// chuyen len thanh API
   /* 1️⃣ Lấy dự án */
   const project = PROJECTS_DATA.find(
     (item) => item.id.toString() === id
@@ -122,3 +126,5 @@ export default async function ProjectDetailPage({ params }: Props) {
     </section>
   );
 }
+
+export default ProjectDetailPage;

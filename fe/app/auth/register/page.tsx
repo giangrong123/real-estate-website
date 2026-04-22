@@ -1,7 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "@/stores/slices/authSlice";
+import { RootState } from "@/stores/store";
+import { User } from "@/types/user"; // Import interface User
 import styles from "./register.module.css";
 
 type FormValues = {
@@ -14,6 +19,12 @@ type FormValues = {
 type FormErrors = Partial<FormValues>;
 
 export default function RegisterPage() {
+  const router = useRouter();
+  const dispatch = useDispatch();
+  
+  // Lấy thông tin user từ store để kiểm tra trạng thái đăng nhập
+  const user = useSelector((state: RootState) => state.auth.user);
+
   const [form, setForm] = useState<FormValues>({
     name: "",
     email: "",
@@ -22,47 +33,46 @@ export default function RegisterPage() {
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
+  const [isLoading, setIsLoading] = useState(false);
+
+  // 🔥 Nếu đã đăng nhập rồi thì không cho ở lại trang Register
+  useEffect(() => {
+    if (user) {
+      router.replace("/");
+    }
+  }, [user, router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
 
-    setForm((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    // Xóa lỗi khi người dùng bắt đầu nhập lại
+    if (errors[name as keyof FormErrors]) {
+      setErrors((prev) => ({ ...prev, [name]: undefined }));
+    }
   };
 
   const validate = (): FormErrors => {
     const newErrors: FormErrors = {};
-
-    if (!form.name.trim()) {
-      newErrors.name = "Vui lòng nhập họ và tên";
-    }
-
+    if (!form.name.trim()) newErrors.name = "Vui lòng nhập họ và tên";
     if (!form.email) {
       newErrors.email = "Vui lòng nhập email";
     } else if (!/\S+@\S+\.\S+/.test(form.email)) {
       newErrors.email = "Email không hợp lệ";
     }
-
     if (!form.password) {
       newErrors.password = "Vui lòng nhập mật khẩu";
     } else if (form.password.length < 6) {
       newErrors.password = "Mật khẩu phải ít nhất 6 ký tự";
     }
-
-    if (!form.confirmPassword) {
-      newErrors.confirmPassword = "Vui lòng nhập lại mật khẩu";
-    } else if (form.confirmPassword !== form.password) {
+    if (form.confirmPassword !== form.password) {
       newErrors.confirmPassword = "Mật khẩu không khớp";
     }
-
     return newErrors;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     const validationErrors = validate();
 
     if (Object.keys(validationErrors).length > 0) {
@@ -71,15 +81,41 @@ export default function RegisterPage() {
     }
 
     setErrors({});
-    console.log("Form hợp lệ:", form);
+    setIsLoading(true);
 
-    // 👉 Sau này call API ở đây
+    try {
+      /**
+       * MÔ PHỎNG LUỒNG FULLSTACK:
+       * 1. Gửi form (email, password, name) lên Backend (NodeJS/NestJS).
+       * 2. Backend tạo User trong Database và trả về Object User kèm ID.
+       */
+      
+      // Giả lập dữ liệu nhận về từ API thành công
+      const mockUserFromBE: User = {
+        id: Date.now(), // ID tạm thời từ client
+        name: form.name,
+        email: form.email,
+        avatar: "",    // Các trường optional có thể để rỗng
+        phone: "",
+        phone_masked: ""
+      };
+
+      // 🔥 Lưu vào Redux Store (Tự động đăng nhập)
+      dispatch(login(mockUserFromBE));
+
+      // Điều hướng về trang chủ
+      router.replace("/");
+    } catch (error) {
+      console.error("Đăng ký thất bại:", error);
+      alert("Có lỗi xảy ra, vui lòng thử lại!");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className={styles.wrapper}>
       <div className={styles.card}>
-        {/* LEFT IMAGE */}
         <div className={styles.imageBox}>
           <div className={styles.overlay}>
             <h2>Tạo tài khoản</h2>
@@ -87,12 +123,10 @@ export default function RegisterPage() {
           </div>
         </div>
 
-        {/* RIGHT FORM */}
         <div className={styles.formBox}>
           <h1>Đăng ký</h1>
 
           <form className={styles.form} onSubmit={handleSubmit}>
-            {/* NAME */}
             <div className={styles.field}>
               <input
                 type="text"
@@ -100,14 +134,12 @@ export default function RegisterPage() {
                 placeholder="Họ và tên"
                 value={form.name}
                 onChange={handleChange}
+                disabled={isLoading}
                 className={errors.name ? styles.inputError : ""}
               />
-              {errors.name && (
-                <p className={styles.error}>{errors.name}</p>
-              )}
+              {errors.name && <p className={styles.error}>{errors.name}</p>}
             </div>
 
-            {/* EMAIL */}
             <div className={styles.field}>
               <input
                 type="email"
@@ -115,14 +147,12 @@ export default function RegisterPage() {
                 placeholder="Email"
                 value={form.email}
                 onChange={handleChange}
+                disabled={isLoading}
                 className={errors.email ? styles.inputError : ""}
               />
-              {errors.email && (
-                <p className={styles.error}>{errors.email}</p>
-              )}
+              {errors.email && <p className={styles.error}>{errors.email}</p>}
             </div>
 
-            {/* PASSWORD */}
             <div className={styles.field}>
               <input
                 type="password"
@@ -130,14 +160,12 @@ export default function RegisterPage() {
                 placeholder="Mật khẩu"
                 value={form.password}
                 onChange={handleChange}
+                disabled={isLoading}
                 className={errors.password ? styles.inputError : ""}
               />
-              {errors.password && (
-                <p className={styles.error}>{errors.password}</p>
-              )}
+              {errors.password && <p className={styles.error}>{errors.password}</p>}
             </div>
 
-            {/* CONFIRM PASSWORD */}
             <div className={styles.field}>
               <input
                 type="password"
@@ -145,28 +173,21 @@ export default function RegisterPage() {
                 placeholder="Nhập lại mật khẩu"
                 value={form.confirmPassword}
                 onChange={handleChange}
+                disabled={isLoading}
                 className={errors.confirmPassword ? styles.inputError : ""}
               />
               {errors.confirmPassword && (
-                <p className={styles.error}>
-                  {errors.confirmPassword}
-                </p>
+                <p className={styles.error}>{errors.confirmPassword}</p>
               )}
             </div>
 
-            <button
-              type="submit"
-              disabled={Object.keys(errors).length > 0}
-            >
-              Đăng ký
+            <button type="submit" disabled={isLoading} className={styles.btnSubmit}>
+              {isLoading ? "Đang xử lý..." : "Đăng ký"}
             </button>
           </form>
 
           <p className={styles.switch}>
-            Đã có tài khoản?{" "}
-            <Link href="/account/user/logins">
-              Đăng nhập
-            </Link>
+            Đã có tài khoản? <Link href="/auth/login">Đăng nhập</Link>
           </p>
         </div>
       </div>

@@ -9,7 +9,7 @@
 }
 
 .container {
-  width: 1200px;
+  /* width: 1200px; */
   max-width: 92%;
   margin: auto;
   height: 70px;
@@ -171,5 +171,86 @@
     text-align: center;
     padding: 10px 0;
     border-radius: 6px;
+  }
+}
+
+/* FAVORITE ICON */
+.favorite {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  text-decoration: none;
+  margin-right: 10px;
+}
+
+/* ICON */
+.icon {
+  font-size: 22px;
+}
+
+/* 🔴 BADGE */
+.badge {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+
+  background: #ee4d2d;
+  color: #fff;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+
+  border-radius: 999px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  line-height: 1;
+
+  border: 2px solid #fff;
+
+  animation: pop 0.25s ease;
+}
+
+/* ANIMATION */
+@keyframes pop {
+  0% {
+    transform: scale(0.6);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* HEART BASE */
+.heart {
+  transition: all 0.25s ease;
+  transform: scale(1);
+}
+
+/* HOVER */
+.favorite:hover .heart {
+  transform: scale(1.15);
+}
+
+/* ACTIVE (đã thích) */
+.heart.active {
+  animation: pop 0.25s ease;
+}
+
+/* POP EFFECT */
+@keyframes pop {
+  0% {
+    transform: scale(0.7);
+  }
+  100% {
+    transform: scale(1);
   }
 }

@@ -1,8 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/stores/store";
 import styles from "./create.module.css";
 
+// --- TYPES ---
 type FormType = {
   title: string;
   address: string;
@@ -21,6 +25,14 @@ type FormErrors = Partial<FormType> & {
 };
 
 export default function PostPage() {
+  const router = useRouter();
+  const hasCheckedAuth = useRef(false);
+
+  // 🔥 REDUX USER
+  const user = useSelector((state: RootState) => state.auth.user);
+
+  const [isLoading, setIsLoading] = useState(true);
+
   const [form, setForm] = useState<FormType>({
     title: "",
     address: "",
@@ -38,14 +50,50 @@ export default function PostPage() {
   const [files, setFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
 
-  // ===== HANDLE TEXT & SELECT =====
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
+
+  const showToast = (
+    message: string,
+    type: "success" | "error" = "success"
   ) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3000);
   };
 
-  // ===== HANDLE FILE =====
+  // 🔥 LOGIN CHECK (REDUX VERSION)
+  useEffect(() => {
+    if (hasCheckedAuth.current) return;
+    hasCheckedAuth.current = true;
+
+    if (!user) {
+      router.replace(
+        "/auth/login?error=login&redirect=/user/post/create"
+      );
+    } else {
+      setTimeout(() => setIsLoading(false), 0);
+    }
+  }, [user, router]);
+
+  // ===== HANDLE CHANGE =====
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+
+    if (errors[e.target.name as keyof FormErrors]) {
+      setErrors((prev) => ({
+        ...prev,
+        [e.target.name]: undefined,
+      }));
+    }
+  };
+
+  // ===== FILE =====
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files;
     if (!selectedFiles) return;
@@ -62,22 +110,22 @@ export default function PostPage() {
 
     setFiles((prev) => [...prev, ...fileArray]);
 
-    const previewUrls = fileArray.map((file) =>
+    const newPreviewUrls = fileArray.map((file) =>
       URL.createObjectURL(file)
     );
-
-    setPreviews((prev) => [...prev, ...previewUrls]);
+    setPreviews((prev) => [...prev, ...newPreviewUrls]);
 
     setErrors((prev) => ({ ...prev, images: undefined }));
   };
 
-  // ===== REMOVE IMAGE =====
   const removeImage = (index: number) => {
+    URL.revokeObjectURL(previews[index]);
+
     setFiles((prev) => prev.filter((_, i) => i !== index));
     setPreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // ===== VALIDATE FULL =====
+  // ===== VALIDATE =====
   const validate = (): FormErrors => {
     const newErrors: FormErrors = {};
 
@@ -87,66 +135,106 @@ export default function PostPage() {
       }
     });
 
-    if (Number(form.price) <= 0)
-      newErrors.price = "Giá phải lớn hơn 0";
-
-    if (Number(form.area) <= 0)
-      newErrors.area = "Diện tích phải lớn hơn 0";
-
-    if (files.length === 0)
-      newErrors.images = "Vui lòng chọn ít nhất 1 ảnh";
+    if (Number(form.price) <= 0) newErrors.price = "Giá phải lớn hơn 0";
+    if (Number(form.area) <= 0) newErrors.area = "Diện tích phải lớn hơn 0";
+    if (files.length === 0) newErrors.images = "Vui lòng chọn ít nhất 1 ảnh";
 
     return newErrors;
   };
 
   // ===== SUBMIT =====
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // 🔥 CHECK REDUX USER
+    if (!user) {
+      showToast("Phiên đăng nhập hết hạn!", "error");
+      router.replace("/auth/login");
+      return;
+    }
 
     const validationErrors = validate();
     setErrors(validationErrors);
 
-    if (Object.keys(validationErrors).length > 0) return;
+    if (Object.keys(validationErrors).length > 0) {
+      showToast("Vui lòng kiểm tra lại thông tin", "error");
+      return;
+    }
 
-    const formData = new FormData();
+    try {
+      const formData = new FormData();
 
-    Object.entries(form).forEach(([key, value]) => {
-      formData.append(key, value);
-    });
+      Object.entries(form).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
 
-    files.forEach((file) => {
-      formData.append("images", file);
-    });
+      files.forEach((file) => {
+        formData.append("images", file);
+      });
 
-    console.log("READY TO SEND:", formData);
+      console.log("🚀 Submit:", formData);
+
+      // TODO: CALL API HERE
+
+      showToast("Đăng tin thành công 🎉", "success");
+
+      // RESET FORM
+      setForm({
+        title: "",
+        address: "",
+        description: "",
+        price: "",
+        area: "",
+        bedrooms: "",
+        bathrooms: "",
+        direction: "",
+        legal_status: "",
+        furniture: "",
+      });
+
+      setFiles([]);
+      setPreviews([]);
+    } catch {
+      showToast("Có lỗi xảy ra, vui lòng thử lại", "error");
+    }
   };
 
+  // 🔥 LOADING UI WHILE CHECK AUTH
+  if (isLoading) {
+    return (
+      <div className={styles.loading}>
+        🔒 Đang kiểm tra đăng nhập...
+      </div>
+    );
+  }
+
   return (
-    
     <section className={styles.wrapper}>
       <h1 className={styles.title}>Đăng tin bán bất động sản</h1>
 
       <form onSubmit={handleSubmit} className={styles.form}>
-        {/* ===== THÔNG TIN CƠ BẢN ===== */}
         <div className={styles.sectionTitle}>Thông tin cơ bản</div>
 
         <div className={styles.group}>
           <label>Tiêu đề *</label>
           <input name="title" value={form.title} onChange={handleChange} />
-          {errors.title && <span className={styles.error}>{errors.title}</span>}
+          {errors.title && (
+            <span className={styles.error}>{errors.title}</span>
+          )}
         </div>
 
         <div className={styles.group}>
           <label>Địa chỉ *</label>
           <input name="address" value={form.address} onChange={handleChange} />
-          {errors.address && <span className={styles.error}>{errors.address}</span>}
+          {errors.address && (
+            <span className={styles.error}>{errors.address}</span>
+          )}
         </div>
 
         <div className={styles.group}>
           <label>Mô tả *</label>
           <textarea
             name="description"
-            rows={5}
             value={form.description}
             onChange={handleChange}
           />
@@ -155,19 +243,12 @@ export default function PostPage() {
           )}
         </div>
 
-        {/* ===== HÌNH ẢNH ===== */}
         <div className={styles.sectionTitle}>Hình ảnh</div>
 
         <div className={styles.group}>
           <label className={styles.fileBox}>
-            Chọn nhiều ảnh (tối đa 10)
-            <input
-              type="file"
-              multiple
-              hidden
-              accept="image/*"
-              onChange={handleFileChange}
-            />
+            📷 Chọn ảnh
+            <input type="file" multiple hidden onChange={handleFileChange} />
           </label>
           {errors.images && (
             <span className={styles.error}>{errors.images}</span>
@@ -176,99 +257,61 @@ export default function PostPage() {
 
         <div className={styles.previewGrid}>
           {previews.map((src, index) => (
-            <div key={index} className={styles.previewItem}>
+            <div key={src} className={styles.previewItem}>
               <img src={src} alt="preview" />
-              <button
-                type="button"
-                className={styles.removeBtn}
-                onClick={() => removeImage(index)}
-              >
+              <button type="button" onClick={() => removeImage(index)}>
                 ✕
               </button>
             </div>
           ))}
         </div>
 
-        {/* ===== CHI TIẾT ===== */}
         <div className={styles.sectionTitle}>Thông tin chi tiết</div>
 
-        <div className={styles.group}>
-          <label>Giá (tỷ) *</label>
-          <input type="number" name="price" value={form.price} onChange={handleChange} />
-          {errors.price && <span className={styles.error}>{errors.price}</span>}
-        </div>
+        <div className={styles.row}>
+          <div className={styles.group}>
+            <label>Giá *</label>
+            <input
+              type="number"
+              name="price"
+              value={form.price}
+              onChange={handleChange}
+            />
+            {errors.price && (
+              <span className={styles.error}>{errors.price}</span>
+            )}
+          </div>
 
-        <div className={styles.group}>
-          <label>Diện tích (m²) *</label>
-          <input type="number" name="area" value={form.area} onChange={handleChange} />
-          {errors.area && <span className={styles.error}>{errors.area}</span>}
-        </div>
-
-        <div className={styles.group}>
-          <label>Số phòng ngủ *</label>
-          <select name="bedrooms" value={form.bedrooms} onChange={handleChange}>
-            <option value="">-- Chọn --</option>
-            <option value="1">1 phòng</option>
-            <option value="2">2 phòng</option>
-            <option value="3">3 phòng</option>
-            <option value="4">4+ phòng</option>
-          </select>
-          {errors.bedrooms && <span className={styles.error}>{errors.bedrooms}</span>}
-        </div>
-
-        <div className={styles.group}>
-          <label>Số phòng tắm *</label>
-          <select name="bathrooms" value={form.bathrooms} onChange={handleChange}>
-            <option value="">-- Chọn --</option>
-            <option value="1">1 phòng</option>
-            <option value="2">2 phòng</option>
-            <option value="3">3+ phòng</option>
-          </select>
-          {errors.bathrooms && <span className={styles.error}>{errors.bathrooms}</span>}
-        </div>
-
-        <div className={styles.group}>
-          <label>Hướng nhà *</label>
-          <select name="direction" value={form.direction} onChange={handleChange}>
-            <option value="">-- Chọn --</option>
-            <option value="Đông">Đông</option>
-            <option value="Tây">Tây</option>
-            <option value="Nam">Nam</option>
-            <option value="Bắc">Bắc</option>
-          </select>
-          {errors.direction && <span className={styles.error}>{errors.direction}</span>}
-        </div>
-
-        <div className={styles.group}>
-          <label>Tình trạng pháp lý *</label>
-          <select name="legal_status" value={form.legal_status} onChange={handleChange}>
-            <option value="">-- Chọn --</option>
-            <option value="Sổ đỏ">Sổ đỏ</option>
-            <option value="Sổ hồng">Sổ hồng</option>
-            <option value="Đang chờ sổ">Đang chờ sổ</option>
-          </select>
-          {errors.legal_status && (
-            <span className={styles.error}>{errors.legal_status}</span>
-          )}
-        </div>
-
-        <div className={styles.group}>
-          <label>Nội thất *</label>
-          <select name="furniture" value={form.furniture} onChange={handleChange}>
-            <option value="">-- Chọn --</option>
-            <option value="Đầy đủ">Đầy đủ</option>
-            <option value="Cơ bản">Cơ bản</option>
-            <option value="Không nội thất">Không nội thất</option>
-          </select>
-          {errors.furniture && (
-            <span className={styles.error}>{errors.furniture}</span>
-          )}
+          <div className={styles.group}>
+            <label>Diện tích *</label>
+            <input
+              type="number"
+              name="area"
+              value={form.area}
+              onChange={handleChange}
+            />
+            {errors.area && (
+              <span className={styles.error}>{errors.area}</span>
+            )}
+          </div>
         </div>
 
         <button type="submit" className={styles.submit}>
-          Đăng tin
+          🚀 Đăng tin ngay
         </button>
       </form>
+
+      {toast && (
+        <div
+          className={`${styles.toast} ${
+            toast.type === "success"
+              ? styles.success
+              : styles.errorToast
+          }`}
+        >
+          {toast.message}
+        </div>
+      )}
     </section>
   );
 }

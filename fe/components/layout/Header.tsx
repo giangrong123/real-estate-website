@@ -2,14 +2,40 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useSelector, useDispatch } from "react-redux";
+
+// Import từ đúng các folder Redux thuần
+import { logout } from "@/stores/slices/authSlice";
+// Giả sử bạn không dùng login ở đây thì có thể bỏ qua import login
+import type { RootState } from "@/stores/store"; 
+
 import styles from "./styles/Header.module.css";
+import HeartIcon from "@/components/icons/HeartIcon";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+  const dispatch = useDispatch();
+
+  // 1. Lấy dữ liệu user từ auth store
+  const { isLoggedIn, user } = useSelector((state: RootState) => state.auth);
+
+  console.log("Header check:", { isLoggedIn, userEmail: user?.email });
+
+  // 2. Lấy danh sách ID yêu thích từ favorites store
+  // Lưu ý: state.favorites.favoriteIds (khớp với tên biến trong reducer ta vừa viết)
+  const favoriteIds = useSelector(
+    (state: RootState) => state.favorites.favoriteIds || []
+  );
 
   const isActive = (path: string) => pathname.startsWith(path);
+
+  const handleLogout = () => {
+  logout(dispatch); // Truyền dispatch vào hàm logout đã import từ authSlice
+  router.replace("/");
+};
 
   return (
     <header className={styles.header}>
@@ -25,7 +51,10 @@ export default function Header() {
         </div>
 
         {/* MOBILE BUTTON */}
-        <div className={styles.menuToggle} onClick={() => setOpen(!open)}>
+        <div
+          className={styles.menuToggle}
+          onClick={() => setOpen(!open)}
+        >
           ☰
         </div>
 
@@ -67,28 +96,79 @@ export default function Header() {
 
             {/* MOBILE AUTH */}
             <div className={styles.mobileAuth}>
-              <Link href="/logins" className={styles.btnOutline}>
-                Đăng nhập
+              {user ? (
+                <>
+                  <span>{user.email}</span>
+                  <button onClick={handleLogout}>Đăng xuất</button>
+                </>
+              ) : (
+                <>
+                  <Link href="/auth/login" className={styles.btnOutline}>
+                    Đăng nhập
+                  </Link>
+
+                  <Link href="/auth/register" className={styles.btnPrimary}>
+                    Đăng ký
+                  </Link>
+                </>
+              )}
+              
+              {/* Thêm link yêu thích cho mobile nếu cần */}
+              <Link href="/user/favorites" className={styles.navLink}>
+                Tin yêu thích ({favoriteIds.length})
               </Link>
-              <Link href="/registers" className={styles.btnPrimary}>
-                Đăng ký
-              </Link>
-              <Link href="/posts" className={styles.btnPost}>
+
+              <Link href="/user/post/create" className={styles.btnPost}>
                 Đăng tin
               </Link>
             </div>
           </ul>
         </nav>
 
-        {/* DESKTOP ACTIONS */}
+        {/* RIGHT SIDE */}
         <div className={styles.actions}>
-          <Link href="/auth/login" className={styles.btnOutline}>
-            Đăng nhập
+          
+          {/* ❤️ FAVORITE - Đã được sửa lại logic badge */}
+          <Link
+            href="/user/favorites"
+            className={`${styles.favorite} ${
+              isActive("/user/favorites") ? styles.active : ""
+            }`}
+          >
+            {/* HeartIcon sáng lên khi có tin yêu thích */}
+            <HeartIcon active={favoriteIds.length > 0} />
+
+            {favoriteIds.length > 0 && (
+              <span className={styles.badge}>
+                {favoriteIds.length > 99 ? "99+" : favoriteIds.length}
+              </span>
+            )}
           </Link>
-          <Link href="/auth/register" className={styles.btnPrimary}>
-            Đăng ký
-          </Link>
-          <Link href="/account/user/posts" className={styles.btnPost}>
+          
+          {/* AUTH */}
+          {isLoggedIn && user ? (
+            <>
+              <span className={styles.userEmail}>{user.email}</span>
+              <button
+                onClick={handleLogout}
+                className={styles.btnOutline}
+              >
+                Đăng xuất
+              </button>
+            </>
+          ) : (
+            <>
+              <Link href="/auth/login" className={styles.btnOutline}>
+                Đăng nhập
+              </Link>
+
+              <Link href="/auth/register" className={styles.btnPrimary}>
+                Đăng ký
+              </Link>
+            </>
+          )}
+
+          <Link href="/user/post/create" className={styles.btnPost}>
             Đăng tin
           </Link>
         </div>

@@ -41,3 +41,12 @@ img {
 }
 
 
+body.light {
+  background: white;
+  color: black;
+}
+
+body.dark {
+  background: #111;
+  color: white;
+}
