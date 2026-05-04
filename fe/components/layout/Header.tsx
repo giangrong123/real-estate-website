@@ -1,14 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 
-// Import từ đúng các folder Redux thuần
+import { AppDispatch, RootState } from "@/stores/store";
 import { logout } from "@/stores/slices/authSlice";
-// Giả sử bạn không dùng login ở đây thì có thể bỏ qua import login
-import type { RootState } from "@/stores/store"; 
+import { fetchFavorites } from "@/stores/slices/favoriteSlice";
 
 import styles from "./styles/Header.module.css";
 import HeartIcon from "@/components/icons/HeartIcon";
@@ -17,25 +16,34 @@ export default function Header() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
-  // 1. Lấy dữ liệu user từ auth store
-  const { isLoggedIn, user } = useSelector((state: RootState) => state.auth);
+  const hasLoaded = useRef(false); // 🔥 tránh gọi API nhiều lần
 
-  console.log("Header check:", { isLoggedIn, userEmail: user?.email });
+  // AUTH
+  const { isLoggedIn, user } = useSelector(
+    (state: RootState) => state.auth
+  );
 
-  // 2. Lấy danh sách ID yêu thích từ favorites store
-  // Lưu ý: state.favorites.favoriteIds (khớp với tên biến trong reducer ta vừa viết)
+  // FAVORITE
   const favoriteIds = useSelector(
     (state: RootState) => state.favorites.favoriteIds || []
   );
 
+  // 🔥 LOAD FAVORITES KHI LOGIN
+  useEffect(() => {
+    if (isLoggedIn && user?.id && !hasLoaded.current) {
+      dispatch(fetchFavorites(String(user.id)));
+      hasLoaded.current = true;
+    }
+  }, [isLoggedIn, user?.id, dispatch]);
+
   const isActive = (path: string) => pathname.startsWith(path);
 
   const handleLogout = () => {
-  logout(dispatch); // Truyền dispatch vào hàm logout đã import từ authSlice
-  router.replace("/");
-};
+    dispatch(logout());
+    router.replace("/");
+  };
 
   return (
     <header className={styles.header}>
@@ -74,9 +82,9 @@ export default function Header() {
 
             <li>
               <Link
-                href="/project"
+                href="/projects"
                 className={`${styles.navLink} ${
-                  isActive("/project") ? styles.active : ""
+                  isActive("/projects") ? styles.active : ""
                 }`}
               >
                 Dự án
@@ -96,7 +104,7 @@ export default function Header() {
 
             {/* MOBILE AUTH */}
             <div className={styles.mobileAuth}>
-              {user ? (
+              {isLoggedIn && user ? (
                 <>
                   <span>{user.email}</span>
                   <button onClick={handleLogout}>Đăng xuất</button>
@@ -112,8 +120,7 @@ export default function Header() {
                   </Link>
                 </>
               )}
-              
-              {/* Thêm link yêu thích cho mobile nếu cần */}
+
               <Link href="/user/favorites" className={styles.navLink}>
                 Tin yêu thích ({favoriteIds.length})
               </Link>
@@ -127,28 +134,31 @@ export default function Header() {
 
         {/* RIGHT SIDE */}
         <div className={styles.actions}>
-          
-          {/* ❤️ FAVORITE - Đã được sửa lại logic badge */}
+          {/* ❤️ FAVORITE */}
           <Link
             href="/user/favorites"
             className={`${styles.favorite} ${
               isActive("/user/favorites") ? styles.active : ""
             }`}
           >
-            {/* HeartIcon sáng lên khi có tin yêu thích */}
             <HeartIcon active={favoriteIds.length > 0} />
 
             {favoriteIds.length > 0 && (
               <span className={styles.badge}>
-                {favoriteIds.length > 99 ? "99+" : favoriteIds.length}
+                {favoriteIds.length > 99
+                  ? "99+"
+                  : favoriteIds.length}
               </span>
             )}
           </Link>
-          
+
           {/* AUTH */}
           {isLoggedIn && user ? (
             <>
-              <span className={styles.userEmail}>{user.email}</span>
+              <span className={styles.userEmail}>
+                {user.email}
+              </span>
+
               <button
                 onClick={handleLogout}
                 className={styles.btnOutline}

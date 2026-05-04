@@ -1,159 +1,177 @@
-/* ===== PAGE WRAPPER ===== */
+/* ===== WRAPPER ===== */
 .wrapper {
-  background: #f5f7fa;
-  padding: 32px 0 48px;
+  background: #f6f8fb;
+  padding: 40px 0;
 }
 
-/* ===== MAIN LAYOUT ===== */
-.layout {
-  width: 1200px;
-  max-width: 95%;
+/* ===== LAYOUT ===== */
+.container {
+  max-width: 1200px;
   margin: auto;
   display: grid;
-  grid-template-columns: 1fr 360px;
+  grid-template-columns: 2fr 1fr;
   gap: 32px;
 }
 
-/* ================= LEFT ================= */
-.left {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 24px 28px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+/* ===== MAIN ===== */
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.title {
-  font-size: 26px;
+/* ===== HEADER ===== */
+.header h1 {
+  font-size: 28px;
   font-weight: 700;
   line-height: 1.3;
-  margin-top: 20px;
 }
 
-.address {
-  margin-top: 6px;
+.header p {
   color: #666;
-  font-size: 14px;
+  margin-top: 6px;
 }
 
-/* ===== MAIN STATS ===== */
-.stats {
+/* ===== PRICE ===== */
+.priceBox {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.price {
+  font-size: 30px;
+  font-weight: 800;
+  color: #e53935;
+}
+
+.area {
+  color: #555;
+  font-size: 15px;
+}
+
+/* ===== QUICK INFO ===== */
+.quickInfo {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
-  margin: 28px 0;
 }
 
-.stats div {
-  background: #f8f9fb;
-  border-radius: 14px;
-  padding: 14px 10px;
+.quickInfo div {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 14px;
   text-align: center;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transition: 0.2s;
 }
 
-.stats span {
-  font-size: 13px;
-  color: #777;
+.quickInfo div:hover {
+  transform: translateY(-2px);
 }
 
-.stats b {
+/* ===== CARD ===== */
+.card {
+  background: #ffffff;
+  padding: 22px;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+.card h2 {
+  font-size: 18px;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+/* ===== GRID ===== */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.grid div {
+  background: #f9fafc;
+  padding: 12px;
+  border-radius: 10px;
+}
+
+.grid span {
   display: block;
-  margin-top: 6px;
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 13px;
+  color: #888;
 }
 
-/* PRICE EMPHASIS */
-.price {
-  color: #e53935;
-  font-size: 18px;
-  font-weight: 700;
+.grid b {
+  font-size: 15px;
 }
 
-/* ===== SECTIONS ===== */
-.section {
-  margin-top: 32px;
+/* ===== STATUS ===== */
+.available {
+  color: #2e7d32;
 }
 
-.section h2 {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 14px;
-  padding-left: 10px;
-  border-left: 4px solid #e53935;
+.sold {
+  color: #d32f2f;
 }
 
-.section ul {
-  padding-left: 16px;
-}
-
-.section li {
-  margin-bottom: 8px;
-  line-height: 1.6;
-}
-
-.section p {
-  line-height: 1.7;
-  color: #333;
-}
-
-/* ================= RIGHT ================= */
-.right {
+/* ===== SIDEBAR ===== */
+.sidebar {
   position: sticky;
-  top: 96px;
+  top: 90px;
   height: fit-content;
 }
 
 /* ===== CONTACT BOX ===== */
 .contactBox {
   background: #ffffff;
+  padding: 20px;
   border-radius: 16px;
-  padding: 22px;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
 }
 
 /* USER */
 .user {
   display: flex;
   align-items: center;
-  gap: 14px;
-  margin-bottom: 20px;
+  gap: 12px;
 }
 
-.avatar {
-  width: 56px;
-  height: 56px;
+.user img {
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
   object-fit: cover;
-  border: 1px solid #eee;
 }
 
-.userName {
+.user p {
   font-weight: 600;
-  font-size: 15px;
 }
 
-.userRole {
-  margin-top: 2px;
+.user span {
   font-size: 13px;
   color: #777;
 }
 
-/* ===== ACTION BUTTONS ===== */
+/* ===== BUTTON ===== */
 .callBtn,
 .zaloBtn {
   width: 100%;
-  border: none;
-  border-radius: 14px;
+  margin-top: 14px;
   padding: 14px;
-  font-size: 16px;
+  border: none;
+  border-radius: 12px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: 0.2s;
 }
 
 .callBtn {
   background: #e53935;
-  color: #ffffff;
+  color: white;
 }
 
 .callBtn:hover {
@@ -162,38 +180,40 @@
 }
 
 .zaloBtn {
-  margin-top: 12px;
   background: #0a68fe;
-  color: #ffffff;
+  color: white;
 }
 
 .zaloBtn:hover {
-  background: #0857d8;
+  background: #0957d1;
   transform: translateY(-1px);
 }
 
-.text {
-  width: 700px;
-  margin: auto;
+/* ===== NOTE ===== */
+.note {
+  text-align: center;
+  color: #777;
+  margin-top: 30px;
+  font-size: 13px;
 }
 
-/* ================= RESPONSIVE ================= */
+/* ===== RESPONSIVE ===== */
 @media (max-width: 1024px) {
-  .layout {
+  .container {
     grid-template-columns: 1fr;
   }
 
-  .right {
+  .sidebar {
     position: static;
   }
 }
 
 @media (max-width: 640px) {
-  .stats {
+  .quickInfo {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .title {
+  .header h1 {
     font-size: 22px;
   }
 }

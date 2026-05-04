@@ -4,72 +4,16 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-import { login } from "@/stores/slices/authSlice2";
+import { login } from "@/stores/slices/authSlice";
 import { RootState } from "@/stores/store";
 import styles from "./login.module.css";
-import { defaultConfig } from "next/dist/server/config-shared";
-
+import { AppDispatch } from "@/stores/store";
 type FormType = { email: string; password: string };
-
-// export default function LoginPage() {
-//   const router = useRouter();
-//   const searchParams = useSearchParams();
-//   const dispatch = useDispatch();
-
-//   // THÊM: Lấy thêm 'user' từ state.auth
-//   const { isLoggedIn, loading, error, user } = useSelector((state: RootState) => state.auth);
-
-//   const [form, setForm] = useState<FormType>({ email: "", password: "" });
-//   const [errors, setErrors] = useState<Partial<FormType>>({});
-
-//   // ==================== DEBUG LOG EMAIL ====================
-//   useEffect(() => {
-//     // Mỗi khi 'user' hoặc 'isLoggedIn' thay đổi, code này sẽ chạy
-//     if (isLoggedIn && user) {
-//       console.log("✅ Đăng nhập thành công!");
-//       console.log("📧 Email của user hiện tại:", user.email); 
-//     }
-//   }, [isLoggedIn, user]);
-
-//   // ==================== DEBUG REDIRECT ====================
-//   useEffect(() => {
-//     if (isLoggedIn) {
-//       const redirectUrl = searchParams.get("redirect") || "/";
-//       router.replace(redirectUrl);
-//     }
-//   }, [isLoggedIn, router, searchParams]);
-
-//   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-//     setForm({ ...form, [e.target.name]: e.target.value });
-//     if (errors[e.target.name as keyof FormType]) {
-//       setErrors({ ...errors, [e.target.name]: undefined });
-//     }
-//   };
-
-//   const validate = () => {
-//     const newErrors: Partial<FormType> = {};
-//     if (!form.email) newErrors.email = "Vui lòng nhập email";
-//     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) newErrors.email = "Email không đúng định dạng";
-
-//     if (!form.password) newErrors.password = "Vui lòng nhập mật khẩu";
-//     else if (form.password.length < 6) newErrors.password = "Mật khẩu tối thiểu 6 ký tự";
-
-//     setErrors(newErrors);
-//     return Object.keys(newErrors).length === 0;
-//   };
-
-//   const handleSubmit = async (e: React.FormEvent) => {
-//     e.preventDefault();
-//     if (!validate()) return;
-
-//     console.log("🚀 Gọi login với:", form);
-//     await login(dispatch, form);
-//   };
 
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const { isLoggedIn, loading, error, user } = useSelector((state: RootState) => state.auth);
 
@@ -78,11 +22,14 @@ export default function LoginPage() {
   const [errors, setErrors] = useState<Partial<FormType>>({});
 
   useEffect(() => {
-    if (isLoggedIn) {
-      const redirectUrl = searchParams.get("redirect") || "/";
-      router.replace(redirectUrl);
+  if (isLoggedIn && user) {
+    if (user.role === "admin") {
+      router.replace("/admin");
+    } else {
+      router.replace("/user");
     }
-  }, [isLoggedIn, router, searchParams]);
+  }
+}, [isLoggedIn, user, router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -103,12 +50,12 @@ export default function LoginPage() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit =  (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
 
     console.log("🚀 Gọi login với:", form);
-    await login(dispatch, form);
+    dispatch(login(form));
   };
 
   return (

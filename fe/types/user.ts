@@ -6,4 +6,5 @@ export type User = {
   phone?: string;        // Thêm dấu ?
   phone_masked?: string; // Thêm dấu ?
   zalo?: string;
+  role?: "user" | "admin";
 };

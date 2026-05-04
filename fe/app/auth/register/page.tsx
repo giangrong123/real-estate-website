@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-import { login } from "@/stores/slices/authSlice";
+import { loginUser } from "@/stores/slices/authSlice";
 import { RootState } from "@/stores/store";
 import { User } from "@/types/user"; // Import interface User
 import styles from "./register.module.css";

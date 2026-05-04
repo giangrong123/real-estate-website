@@ -5,5 +5,5 @@ export type News = {
   thumbnail: string
   excerpt: string
   content: string
-  createdAt: string
+  created_at: string
 }

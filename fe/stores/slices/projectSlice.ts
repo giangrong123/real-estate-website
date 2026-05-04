@@ -1,79 +1,239 @@
-import { Project } from "@/types/project";
-import { PROJECTS_DATA } from "@/data/projects"; // File data bạn đã chuẩn bị
+// projectSlice.ts
 
-/** * 1. INTERFACES */
-interface ProjectState {
-  allProjects: Project[];       // Dữ liệu gốc
-  filteredProjects: Project[];  // Dữ liệu sau khi lọc để hiển thị
-  filters: {
-    keyword: string;
-    status: string;
-    investor: string;
-  };
+import { AppThunk, AppDispatch } from "../store";
+import { Project } from "@/types/project";
+
+export interface ProjectState {
+  projects: Project[];
+  selectedProject: Project | null;
   loading: boolean;
+  error: string | null;
 }
 
 const initialState: ProjectState = {
-  allProjects: PROJECTS_DATA,
-  filteredProjects: PROJECTS_DATA,
-  filters: {
-    keyword: "",
-    status: "",
-    investor: "",
-  },
+  projects: [],
+  selectedProject: null,
   loading: false,
+  error: null,
 };
 
-/** * 2. ACTION TYPES */
-export const SET_PROJECT_FILTERS = 'SET_PROJECT_FILTERS' as const;
-export const RESET_PROJECT_FILTERS = 'RESET_PROJECT_FILTERS' as const;
+// ACTION TYPES
+export const FETCH_PROJECTS_SUCCESS =
+  "FETCH_PROJECTS_SUCCESS" as const;
 
-/** * 3. ACTIONS */
-export const setProjectFilters = (filters: Partial<ProjectState['filters']>) => ({
-  type: SET_PROJECT_FILTERS,
-  payload: filters,
-});
+export const SEARCH_PROJECTS_SUCCESS =
+  "SEARCH_PROJECTS_SUCCESS" as const;
 
-export const resetProjectFilters = () => ({
-  type: RESET_PROJECT_FILTERS,
-});
+export const FETCH_PROJECTS_FAILURE =
+  "FETCH_PROJECTS_FAILURE" as const;
 
-/** * 4. REDUCER */
-type ProjectAction = 
-  | { type: typeof SET_PROJECT_FILTERS; payload: Partial<ProjectState['filters']> }
-  | { type: typeof RESET_PROJECT_FILTERS };
+export const FETCH_PROJECT_DETAIL =
+  "FETCH_PROJECT_DETAIL" as const;
 
-const projectReducer = (state = initialState, action: ProjectAction): ProjectState => {
-  switch (action.type) {
-    case SET_PROJECT_FILTERS: {
-      const newFilters = { ...state.filters, ...action.payload };
-      const { keyword, status, investor } = newFilters;
+export const SET_PROJECTS_LOADING =
+  "SET_PROJECTS_LOADING" as const;
 
-      const newList = state.allProjects.filter((pj) => {
-        const matchKeyword = pj.name.toLowerCase().includes(keyword.toLowerCase()) || 
-                             pj.address.toLowerCase().includes(keyword.toLowerCase());
-        const matchStatus = status === "" || pj.status === status;
-        const matchInvestor = investor === "" || pj.investor === investor;
+export type ProjectAction =
+  | {
+      type: typeof FETCH_PROJECTS_SUCCESS;
+      payload: Project[];
+    }
+  | {
+      type: typeof SEARCH_PROJECTS_SUCCESS;
+      payload: Project[];
+    }
+  | {
+      type: typeof FETCH_PROJECTS_FAILURE;
+      payload: string;
+    }
+  | {
+      type: typeof SET_PROJECTS_LOADING;
+      payload: boolean;
+    }
+  | {
+      type: typeof FETCH_PROJECT_DETAIL;
+      payload: Project;
+    };
 
-        return matchKeyword && matchStatus && matchInvestor;
+// FETCH ALL
+export const fetchProjects = (): AppThunk => {
+  return async (dispatch: AppDispatch) => {
+    dispatch({
+      type: SET_PROJECTS_LOADING,
+      payload: true,
+    });
+
+    try {
+      const response = await fetch(
+        "http://localhost:5000/projects"
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          "Không thể lấy danh sách dự án"
+        );
+      }
+
+      const data = await response.json();
+
+      dispatch({
+        type: FETCH_PROJECTS_SUCCESS,
+        payload: data,
       });
+    } catch (err) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : "Lỗi server";
 
+      dispatch({
+        type: FETCH_PROJECTS_FAILURE,
+        payload: msg,
+      });
+    } finally {
+      dispatch({
+        type: SET_PROJECTS_LOADING,
+        payload: false,
+      });
+    }
+  };
+};
+
+// SEARCH PROJECT
+export const fetchProjectsBySearch = (
+  search: string
+): AppThunk => {
+  return async (dispatch: AppDispatch) => {
+    dispatch({
+      type: SET_PROJECTS_LOADING,
+      payload: true,
+    });
+
+    try {
+      const response = await fetch(
+        `http://localhost:5000/projects?search=${encodeURIComponent(
+          search
+        )}`
+      );
+
+      if (!response.ok) {
+        throw new Error("Search failed");
+      }
+
+      const data = await response.json();
+
+      dispatch({
+        type: SEARCH_PROJECTS_SUCCESS,
+        payload: data,
+      });
+    } catch (err) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : "Lỗi server";
+
+      dispatch({
+        type: FETCH_PROJECTS_FAILURE,
+        payload: msg,
+      });
+    } finally {
+      dispatch({
+        type: SET_PROJECTS_LOADING,
+        payload: false,
+      });
+    }
+  };
+};
+
+// FETCH DETAIL
+export const fetchProjectById = (
+  id: string
+): AppThunk => {
+  return async (dispatch: AppDispatch) => {
+    dispatch({
+      type: SET_PROJECTS_LOADING,
+      payload: true,
+    });
+
+    try {
+      const res = await fetch(
+        `http://localhost:5000/projects/${id}`
+      );
+
+      if (!res.ok) {
+        throw new Error(
+          "Không tìm thấy dự án"
+        );
+      }
+
+      const data = await res.json();
+
+      dispatch({
+        type: FETCH_PROJECT_DETAIL,
+        payload: data,
+      });
+    } catch (err) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : "Lỗi server";
+
+      dispatch({
+        type: FETCH_PROJECTS_FAILURE,
+        payload: msg,
+      });
+    } finally {
+      dispatch({
+        type: SET_PROJECTS_LOADING,
+        payload: false,
+      });
+    }
+  };
+};
+
+// REDUCER
+export default function projectReducer(
+  state = initialState,
+  action: ProjectAction
+): ProjectState {
+  switch (action.type) {
+    case SET_PROJECTS_LOADING:
       return {
         ...state,
-        filters: newFilters,
-        filteredProjects: newList,
+        loading: action.payload,
+        error: null,
       };
-    }
 
-    case RESET_PROJECT_FILTERS:
+    case FETCH_PROJECTS_SUCCESS:
       return {
-        ...initialState,
-        allProjects: state.allProjects
+        ...state,
+        projects: action.payload,
+        loading: false,
+        error: null,
+      };
+
+    case SEARCH_PROJECTS_SUCCESS:
+      return {
+        ...state,
+        projects: action.payload,
+        loading: false,
+        error: null,
+      };
+
+    case FETCH_PROJECTS_FAILURE:
+      return {
+        ...state,
+        error: action.payload,
+        loading: false,
+      };
+
+    case FETCH_PROJECT_DETAIL:
+      return {
+        ...state,
+        selectedProject: action.payload,
       };
 
     default:
       return state;
   }
-};
-
-export default projectReducer;
+}

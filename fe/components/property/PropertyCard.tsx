@@ -4,33 +4,28 @@ import Link from "next/link";
 import { Property } from "@/types/property";
 import styles from "./PropertyCard.module.css";
 import { useDispatch, useSelector } from "react-redux";
-
-import { RootState } from "@/stores/store"; 
-import { toggleFavorite } from "@/stores/slices/favoriteSlice"; 
-import { getPropertyDetail } from "@/stores/slices/propertySlice"; // Import action detail
+import { RootState, AppDispatch } from "@/stores/store"; 
+import { toggleFavoriteAPI } from "@/stores/slices/favoriteSlice"; // 🔥 đổi ở đây
 
 type Props = {
   property: Property;
 };
 
 export default function PropertyCard({ property }: Props) {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const propertyId = String(property.id);
 
   const favoriteIds = useSelector(
     (state: RootState) => state.favorites.favoriteIds || []
   );
-  const liked = favoriteIds.includes(propertyId);
 
-  // Xử lý khi click vào Card để xem chi tiết
-  const handleCardClick = () => {
-    dispatch(getPropertyDetail(propertyId));
-  };
+  const liked = favoriteIds.includes(propertyId);
 
   function handleLike(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
     e.stopPropagation();
-    dispatch(toggleFavorite(propertyId));
+
+    dispatch(toggleFavoriteAPI("1", propertyId)); // 🔥 CALL API
   }
 
   if (!property) return null;
@@ -39,7 +34,6 @@ export default function PropertyCard({ property }: Props) {
     <Link 
       href={`/properties/${propertyId}`} 
       className={styles.card}
-      onClick={handleCardClick} // Báo cho Redux biết cái nào đang được chọn
     >
       <div className={styles.imageWrapper}>
         <img
@@ -48,7 +42,9 @@ export default function PropertyCard({ property }: Props) {
           className={styles.thumbnail}
         />
         <span className={styles.price}>{property.price} tỷ</span>
-        {property.is_featured && <span className={styles.featured}>Nổi bật</span>}
+        {property.is_featured && (
+          <span className={styles.featured}>Nổi bật</span>
+        )}
       </div>
 
       <div className={styles.info}>
@@ -59,6 +55,7 @@ export default function PropertyCard({ property }: Props) {
           <span>{property.area} m²</span>
           <span>{property.bedrooms} PN</span>
           <span>{property.bathrooms} WC</span>
+
           <button
             type="button"
             className={`${styles.likeBtn} ${liked ? styles.liked : ""}`}

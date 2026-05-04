@@ -19,19 +19,17 @@ export default function ProjectCard({ project }: Props) {
   }
 
   return (
-    <Link href={`/project/${project.id}`} className={styles.card}>
+    <Link href={`/projects/${project.id}`} className={styles.card}>
       {/* IMAGE */}
       <div className={styles.imageWrapper}>
         <img
-          src={project.thumbnail}
+          src={project.thumbnail || "/placeholder.jpg"}
           alt={project.name}
           className={styles.thumbnail}
         />
 
-        {/* STATUS */}
         <span className={styles.status}>{project.status}</span>
 
-        {/* APPROVED */}
         {project.is_approved && (
           <span className={styles.approved}>Đã duyệt</span>
         )}
@@ -43,20 +41,17 @@ export default function ProjectCard({ project }: Props) {
         <p className={styles.address}>{project.address}</p>
         <p className={styles.description}>{project.description}</p>
 
-        {/* META */}
         <div className={styles.meta}>
           <span>Chủ đầu tư: {project.investor}</span>
 
           <button
             className={`${styles.likeBtn} ${liked ? styles.liked : ""}`}
             onClick={handleLike}
-            aria-label="Lưu dự án yêu thích"
           >
-            ♥
+            {liked ? "❤️" : "🤍"}
           </button>
         </div>
 
-        {/* FOOTER */}
         <div className={styles.footer}>
           <span className={styles.viewMore}>Xem chi tiết →</span>
         </div>

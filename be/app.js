@@ -5,6 +5,14 @@ const mainRouter = require('./router');
 
 const app = express();
 
+const PORT = 5000; // Đặt cổng là 5000 để tránh trùng với Next.js (3000)
+
+app.listen(PORT, () => {
+  console.log(`Server chạy tại: http://localhost:${PORT}`);
+});
+
+module.exports = app;
+
 // ==================== CORS - PHẢI ĐẶT ĐẦU TIÊN ====================
 app.use(cors({
   origin: ['http://localhost:3000', 'http://localhost:3001', 'http://127.0.0.1:3001'],

@@ -1,35 +1,49 @@
-import { combineReducers } from 'redux';
-import { legacy_createStore as createStore, applyMiddleware, StoreEnhancer } from 'redux';
-import { thunk } from 'redux-thunk';
+import { 
+  combineReducers, 
+  applyMiddleware, 
+  legacy_createStore as createStore, 
+  Action, 
+  Reducer 
+} from 'redux';
+import { thunk, ThunkDispatch, ThunkAction } from 'redux-thunk';
+
+// Import các reducers của bạn
 import authReducer from './slices/authSlice';
 import favoriteReducer from './slices/favoriteSlice';
 import propertyReducer from './slices/propertySlice';
 import projectReducer from './slices/projectSlice';
-import newsReducer from './slices/newsSlice'; // <--- Đừng quên ông này!
-import themeReducer from './slices/themeSlice';
-import weather from './slices/weatherSlice'
+import newsReducer from './slices/newsSlice';
 
-
-// 1. Gộp tất cả các mảnh logic (Reducers)
 const rootReducer = combineReducers({
   auth: authReducer,
   favorites: favoriteReducer,
   properties: propertyReducer, 
   projects: projectReducer,
-  news: newsReducer, // <--- Đã thêm vào bộ máy tổng
-  theme: themeReducer,
+  news: newsReducer,
 });
 
-// 2. Khởi tạo Store
+export type RootState = ReturnType<typeof rootReducer>;
+
+// Sử dụng Action<string> thay cho AnyAction nếu bạn muốn cực kỳ chặt chẽ
+const finalReducer = (rootReducer as unknown) as Reducer<RootState, Action<string>>;
+
 const store = createStore(
-  rootReducer,
-  // Nếu không có preloadedState, TS đôi khi nhầm applyMiddleware là tham số thứ 2
-  applyMiddleware(thunk) 
+  finalReducer,
+  applyMiddleware(thunk)
 );
 
-/** * 3. ĐỊNH NGHĨA CÁC TYPES
+/**
+ * THAY THẾ ANY TẠI ĐÂY:
+ * Thay vì 'any', ta dùng 'undefined' cho extra argument 
+ * và 'Action' cho kiểu action cơ bản.
  */
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
+export type AppDispatch = ThunkDispatch<RootState, undefined, Action<string>>;
+
+export type AppThunk<ReturnType = void> = ThunkAction<
+  ReturnType,
+  RootState,
+  undefined,
+  Action<string>
+>;
 
 export default store;

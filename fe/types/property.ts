@@ -1,3 +1,4 @@
+import { User } from "./user";
 export type PropertyStatus = "available" | "sold";
 
 export type Property = {
@@ -34,4 +35,5 @@ export type Property = {
 
   created_at: string;
   updated_at: string;
+   user?: User; // 🔥 THÊM DÒNG NÀY (QUAN TRỌNG)
 };
