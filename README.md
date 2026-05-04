@@ -16,5 +16,9 @@ Website bất động sản cho phép người dùng đăng tin, tìm kiếm và
 
 ## 📦 Installation
 ```bash
+FE
 npm install
 npm run dev
+BE
+node app.js
+
