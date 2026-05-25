@@ -145,7 +145,7 @@ export default function ProjectDetailPage() {
 
       </div>
 
-      <HomeProject />
+      {/* <HomeProject /> */}
 
     </section>
   );

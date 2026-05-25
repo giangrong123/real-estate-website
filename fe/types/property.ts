@@ -1,15 +1,17 @@
 import { User } from "./user";
-export type PropertyStatus = "available" | "sold";
+
+export type PropertyStatus =
+  | "AVAILABLE"
+  | "SOLD";
 
 export type Property = {
-  // user: any;
   id: number;
   title: string;
-  thumbnail: string;   // dùng cho LIST
-  images: string[];    // dùng cho DETAIL
+  slug: string;
+  thumbnail: string;   // Dùng cho danh sách (List)
+  images: string[];    // Dùng cho chi tiết (Detail)
   address: string;
   description: string;
-  
 
   // Giá (đơn vị: tỷ)
   price: number;
@@ -19,21 +21,51 @@ export type Property = {
   bathrooms: number;
 
   direction: string;
-  legal_status: string;
+  legalStatus: string;  // legal_status -> legalStatus
   furniture: string;
 
   status: PropertyStatus;
 
-  is_approved: boolean;
-  is_featured: boolean;
+  isApproved: boolean;  // is_approved -> isApproved
+  isFeatured: boolean;  // is_featured -> isFeatured
 
-  expired_at: string;
+  expiredAt: string;    // expired_at -> expiredAt
 
-  user_id: number;
-  type_id: number;
-  approved_by: number | null;
+  userId: number;       // user_id -> userId
+  typeId: number;       // type_id -> typeId
+  approvedBy: number | null; // approved_by -> approvedBy
 
-  created_at: string;
-  updated_at: string;
-   user?: User; // 🔥 THÊM DÒNG NÀY (QUAN TRỌNG)
+  createdAt: string;    // created_at -> createdAt
+  updatedAt: string;    // updated_at -> updatedAt
+  
+  user?: User;          // Relation object
+};
+
+export type CreatePropertyPayload = {
+  title: string;
+  address: string;
+  description: string;
+
+  price: number;
+  area: number;
+
+  bedrooms: number;
+  bathrooms: number;
+
+  direction: string;
+  legalStatus: string;
+  furniture: string;
+
+  status: string;
+
+  isApproved: boolean;
+  isFeatured: boolean;
+
+  expiredAt: string;
+
+  userId: number;
+  typeId: number;
+
+  images: string[];
+  thumbnail: string;
 };

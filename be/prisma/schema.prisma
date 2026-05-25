@@ -1,0 +1,434 @@
+// generator client {
+//   provider = "prisma-client-js"
+// }
+
+// datasource db {
+//   provider = "mysql"
+//   url      = env("DATABASE_URL")
+// }
+
+// enum UserRole {
+//   USER
+//   ADMIN
+//   STAFF
+// }
+
+// enum PropertyStatus {
+//   AVAILABLE
+//   SOLD
+//   RENTED
+//   PENDING
+// }
+
+// enum ProjectStatus {
+//   UPCOMING
+//   OPENING
+//   COMPLETED
+// }
+
+// model User {
+//   id Int @id @default(autoincrement())
+
+//   name     String
+//   email    String @unique
+//   password String
+
+//   phone  String?
+//   avatar String?
+
+//   role UserRole @default(USER)
+
+//   createdAt DateTime @default(now()) @map("created_at")
+//   updatedAt DateTime @updatedAt @map("updated_at")
+
+//   properties Property[]
+//   favorites  Favorite[]
+
+//   @@map("users")
+// }
+
+// model AdminUser {
+//   id Int @id @default(autoincrement())
+
+//   name     String
+//   email    String @unique
+//   password String
+
+//   avatar String?
+
+//   role UserRole @default(ADMIN)
+
+//   createdAt DateTime @default(now()) @map("created_at")
+//   updatedAt DateTime @updatedAt @map("updated_at")
+
+//   approvedProperties Property[] @relation("approved_by_relation")
+
+//   projects Project[]
+//   news     News[]
+
+//   @@map("admin_users")
+// }
+
+// model PropertyType {
+//   id Int @id @default(autoincrement())
+
+//   name String
+//   slug String @unique
+
+//   properties Property[]
+
+//   @@map("property_types")
+// }
+
+// model Property {
+//   id Int @id @default(autoincrement())
+
+//   thumbnail String @db.Text
+
+//   title String
+//   slug  String @unique
+
+//   description String @db.Text
+
+//   price Decimal @db.Decimal(15, 2)
+
+//   area Float
+
+//   bedrooms  Int?
+//   bathrooms Int?
+
+//   direction   String?
+//   legalStatus String? @map("legal_status")
+//   furniture   String?
+
+//   status PropertyStatus @default(AVAILABLE)
+
+//   isApproved Boolean @default(false) @map("is_approved")
+//   isFeatured Boolean @default(false) @map("is_featured")
+
+//   expiredAt DateTime? @map("expired_at")
+
+//   address String
+
+//   userId Int  @map("user_id")
+//   user   User @relation(fields: [userId], references: [id])
+
+//   typeId Int          @map("type_id")
+//   type   PropertyType @relation(fields: [typeId], references: [id])
+
+//   approvedBy Int? @map("approved_by")
+
+//   approvedAdmin AdminUser? @relation("approved_by_relation", fields: [approvedBy], references: [id])
+
+//   createdAt DateTime @default(now()) @map("created_at")
+//   updatedAt DateTime @updatedAt @map("updated_at")
+
+//   images    PropertyImage[]
+//   favorites Favorite[]
+
+//   @@index([userId])
+//   @@index([typeId])
+//   @@index([createdAt])
+//   @@index([status])
+//   @@map("properties")
+// }
+
+// model Project {
+//   id Int @id @default(autoincrement())
+
+//   thumbnail String
+
+//   name String
+//   slug String @unique
+
+//   description String @db.Text
+
+//   investor String?
+
+//   status ProjectStatus @default(UPCOMING)
+
+//   address String
+
+//   isApproved Boolean @default(false) @map("is_approved")
+
+//   createdBy Int @map("created_by")
+
+//   admin AdminUser @relation(fields: [createdBy], references: [id])
+
+//   createdAt DateTime @default(now()) @map("created_at")
+//   updatedAt DateTime @updatedAt @map("updated_at")
+
+//   images ProjectImage[]
+
+//   @@index([createdBy])
+//   @@map("projects")
+// }
+
+// model News {
+//   id Int @id @default(autoincrement())
+
+//   title String
+
+//   slug String @unique
+
+//   content String @db.Text
+
+//   thumbnail String
+
+//   authorId Int @map("author_id")
+
+//   author AdminUser @relation(fields: [authorId], references: [id])
+
+//   isPublished Boolean @default(false) @map("is_published")
+
+//   createdAt DateTime @default(now()) @map("created_at")
+//   updatedAt DateTime @updatedAt @map("updated_at")
+
+//   @@index([authorId])
+//   @@map("news")
+// }
+
+// model Favorite {
+//   id Int @id @default(autoincrement())
+
+//   userId     Int @map("user_id")
+//   propertyId Int @map("property_id")
+
+//   user User @relation(fields: [userId], references: [id])
+
+//   property Property @relation(fields: [propertyId], references: [id])
+
+//   createdAt DateTime @default(now()) @map("created_at")
+//   updatedAt DateTime @updatedAt @map("updated_at")
+
+//   @@unique([userId, propertyId])
+//   @@index([userId])
+//   @@index([propertyId])
+//   @@map("favorites")
+// }
+
+// model PropertyImage {
+//   id Int @id @default(autoincrement())
+
+//   propertyId Int @map("property_id")
+
+//   property Property @relation(fields: [propertyId], references: [id])
+
+//   imageUrl String @map("image_url")
+
+//   isCover Boolean @default(false) @map("is_cover")
+
+//   createdAt DateTime @default(now()) @map("created_at")
+//   updatedAt DateTime @updatedAt @map("updated_at")
+
+//   @@index([propertyId])
+//   @@map("property_images")
+// }
+
+// model ProjectImage {
+//   id Int @id @default(autoincrement())
+
+//   projectId Int @map("project_id")
+
+//   project Project @relation(fields: [projectId], references: [id])
+
+//   imageUrl String  @db.Text @map("image_url")
+
+//   isCover Boolean @default(false) @map("is_cover")
+
+//   createdAt DateTime @default(now()) @map("created_at")
+//   updatedAt DateTime @updatedAt @map("updated_at")
+
+//   @@index([projectId])
+//   @@map("project_images")
+// }
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum PropertyStatus {
+  AVAILABLE
+  SOLD
+  RENTED
+}
+
+model User {
+  id Int @id @default(autoincrement())
+
+  name     String
+  email    String @unique
+  password String
+
+  phone  String?
+  avatar String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  properties Property[]
+  favorites  Favorite[]
+
+  @@map("users")
+}
+
+model AdminUser {
+  id Int @id @default(autoincrement())
+
+  name     String
+  email    String @unique
+  password String
+
+  avatar String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  approvedProperties Property[] @relation("approved_by_relation")
+
+  projects Project[]
+  news     News[]
+
+  @@map("admin_users")
+}
+
+model Property {
+  id Int @id @default(autoincrement())
+
+  thumbnail   String @db.Text
+  title       String
+  description String @db.Text
+
+  price Decimal @db.Decimal(15, 2)
+  area  Float
+
+  bedrooms  Int?
+  bathrooms Int?
+
+  status PropertyStatus @default(AVAILABLE)
+
+  isApproved Boolean @default(false)
+
+  address String
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  approvedBy    Int?
+  approvedAdmin AdminUser? @relation("approved_by_relation", fields: [approvedBy], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  favorites Favorite[]
+
+  direction      String?
+  legalStatus    String?
+  furniture      String?
+  typeId         Int?
+  expiredAt      DateTime?
+  isFeatured     Boolean         @default(false)
+  type           PropertyType?   @relation(fields: [typeId], references: [id])
+  propertyImages PropertyImage[]
+
+  @@map("properties")
+}
+
+model Favorite {
+  id Int @id @default(autoincrement())
+
+  userId     Int
+  propertyId Int
+
+  user     User     @relation(fields: [userId], references: [id])
+  property Property @relation(fields: [propertyId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model Project {
+  id Int @id @default(autoincrement())
+
+  thumbnail String
+  name String
+  description String @db.Text
+
+  investor String
+  status String
+  address String
+
+  contactPhone String?
+
+  isApproved Boolean @default(false)
+
+  createdBy Int
+
+  admin AdminUser @relation(fields: [createdBy],references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  projectImages ProjectImage[]
+}
+
+model News {
+  id Int @id @default(autoincrement())
+
+  title String
+  thumbnail String?
+  excerpt String @db.Text
+  content String @db.Text
+
+  authorId Int
+  author AdminUser @relation(fields: [authorId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PropertyImage {
+  id Int @id @default(autoincrement())
+
+  propertyId Int      @map("property_id")
+  property   Property @relation(fields: [propertyId], references: [id])
+
+  imageUrl String  @map("image_url")
+  isCover  Boolean @default(false) @map("is_cover")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([propertyId])
+  @@map("property_images")
+}
+
+model ProjectImage {
+  id Int @id @default(autoincrement())
+
+  projectId Int     @map("project_id")
+  project   Project @relation(fields: [projectId], references: [id])
+
+  imageUrl String  @map("image_url") @db.Text
+  isCover  Boolean @default(false) @map("is_cover")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([projectId])
+  @@map("project_images")
+}
+
+model PropertyType {
+  id Int @id @default(autoincrement())
+
+  name String
+
+  properties Property[]
+
+  @@map("property_types")
+}

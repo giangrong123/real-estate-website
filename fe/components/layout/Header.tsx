@@ -1,49 +1,62 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
+import { usePathname } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 
-import { AppDispatch, RootState } from "@/stores/store";
-import { logout } from "@/stores/slices/authSlice";
-import { fetchFavorites } from "@/stores/slices/favoriteSlice";
+import type { AppDispatch, RootState } from "@/stores/store";
+
+import {
+  fetchFavorites,
+  resetFavorites,
+} from "@/stores/slices/favoriteSlice";
 
 import styles from "./styles/Header.module.css";
 import HeartIcon from "@/components/icons/HeartIcon";
 
+// ===== CLIENT ONLY =====
+const UserMenu = dynamic(() => import("./UserMenu"), {
+  ssr: false,
+});
+
 export default function Header() {
   const [open, setOpen] = useState(false);
+
   const pathname = usePathname();
-  const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
 
-  const hasLoaded = useRef(false); // 🔥 tránh gọi API nhiều lần
-
-  // AUTH
+  // ===== AUTH =====
   const { isLoggedIn, user } = useSelector(
     (state: RootState) => state.auth
   );
 
-  // FAVORITE
-  const favoriteIds = useSelector(
-    (state: RootState) => state.favorites.favoriteIds || []
-  );
+  // ===== FAVORITES =====
+const favoriteIds = useSelector((state: RootState) =>
+  Array.isArray(state.favorites.favoriteIds)
+    ? state.favorites.favoriteIds
+    : []
+);
 
-  // 🔥 LOAD FAVORITES KHI LOGIN
+const loading = useSelector(
+  (state: RootState) => state.favorites.loading
+);
+
+  // ===== FETCH / RESET FAVORITES =====
   useEffect(() => {
-    if (isLoggedIn && user?.id && !hasLoaded.current) {
-      dispatch(fetchFavorites(String(user.id)));
-      hasLoaded.current = true;
+    if (!isLoggedIn || !user?.id) {
+      // 🚨 quan trọng: logout là phải reset ngay
+      dispatch(resetFavorites());
+      return;
     }
-  }, [isLoggedIn, user?.id, dispatch]);
 
-  const isActive = (path: string) => pathname.startsWith(path);
+    dispatch(fetchFavorites(String(user.id)));
+  }, [dispatch, isLoggedIn, user?.id]);
 
-  const handleLogout = () => {
-    dispatch(logout());
-    router.replace("/");
-  };
+  // ===== ACTIVE LINK =====
+  const isActive = (path: string) =>
+    pathname.startsWith(path);
 
   return (
     <header className={styles.header}>
@@ -58,7 +71,7 @@ export default function Header() {
           </Link>
         </div>
 
-        {/* MOBILE BUTTON */}
+        {/* MOBILE MENU */}
         <div
           className={styles.menuToggle}
           onClick={() => setOpen(!open)}
@@ -67,13 +80,19 @@ export default function Header() {
         </div>
 
         {/* NAV */}
-        <nav className={`${styles.nav} ${open ? styles.activeNav : ""}`}>
+        <nav
+          className={`${styles.nav} ${
+            open ? styles.activeNav : ""
+          }`}
+        >
           <ul>
             <li>
               <Link
                 href="/properties"
                 className={`${styles.navLink} ${
-                  isActive("/properties") ? styles.active : ""
+                  isActive("/properties")
+                    ? styles.active
+                    : ""
                 }`}
               >
                 Nhà đất bán
@@ -84,7 +103,9 @@ export default function Header() {
               <Link
                 href="/projects"
                 className={`${styles.navLink} ${
-                  isActive("/projects") ? styles.active : ""
+                  isActive("/projects")
+                    ? styles.active
+                    : ""
                 }`}
               >
                 Dự án
@@ -95,7 +116,9 @@ export default function Header() {
               <Link
                 href="/news"
                 className={`${styles.navLink} ${
-                  isActive("/news") ? styles.active : ""
+                  isActive("/news")
+                    ? styles.active
+                    : ""
                 }`}
               >
                 Tin tức
@@ -104,41 +127,32 @@ export default function Header() {
 
             {/* MOBILE AUTH */}
             <div className={styles.mobileAuth}>
-              {isLoggedIn && user ? (
-                <>
-                  <span>{user.email}</span>
-                  <button onClick={handleLogout}>Đăng xuất</button>
-                </>
-              ) : (
-                <>
-                  <Link href="/auth/login" className={styles.btnOutline}>
-                    Đăng nhập
-                  </Link>
-
-                  <Link href="/auth/register" className={styles.btnPrimary}>
-                    Đăng ký
-                  </Link>
-                </>
-              )}
+              <UserMenu />
 
               <Link href="/user/favorites" className={styles.navLink}>
-                Tin yêu thích ({favoriteIds.length})
+                Tin yêu thích (
+                {loading ? "..." : favoriteIds.length})
               </Link>
 
-              <Link href="/user/post/create" className={styles.btnPost}>
+              <Link
+                href="/user/post/create"
+                className={styles.btnPost}
+              >
                 Đăng tin
               </Link>
             </div>
           </ul>
         </nav>
 
-        {/* RIGHT SIDE */}
+        {/* RIGHT ACTIONS */}
         <div className={styles.actions}>
-          {/* ❤️ FAVORITE */}
+          {/* FAVORITES */}
           <Link
             href="/user/favorites"
             className={`${styles.favorite} ${
-              isActive("/user/favorites") ? styles.active : ""
+              isActive("/user/favorites")
+                ? styles.active
+                : ""
             }`}
           >
             <HeartIcon active={favoriteIds.length > 0} />
@@ -152,33 +166,14 @@ export default function Header() {
             )}
           </Link>
 
-          {/* AUTH */}
-          {isLoggedIn && user ? (
-            <>
-              <span className={styles.userEmail}>
-                {user.email}
-              </span>
+          {/* USER */}
+          <UserMenu />
 
-              <button
-                onClick={handleLogout}
-                className={styles.btnOutline}
-              >
-                Đăng xuất
-              </button>
-            </>
-          ) : (
-            <>
-              <Link href="/auth/login" className={styles.btnOutline}>
-                Đăng nhập
-              </Link>
-
-              <Link href="/auth/register" className={styles.btnPrimary}>
-                Đăng ký
-              </Link>
-            </>
-          )}
-
-          <Link href="/user/post/create" className={styles.btnPost}>
+          {/* POST */}
+          <Link
+            href="/user/post/create"
+            className={styles.btnPost}
+          >
             Đăng tin
           </Link>
         </div>

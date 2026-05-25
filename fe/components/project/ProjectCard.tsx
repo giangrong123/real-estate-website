@@ -44,12 +44,12 @@ export default function ProjectCard({ project }: Props) {
         <div className={styles.meta}>
           <span>Chủ đầu tư: {project.investor}</span>
 
-          <button
+          {/* <button
             className={`${styles.likeBtn} ${liked ? styles.liked : ""}`}
             onClick={handleLike}
           >
             {liked ? "❤️" : "🤍"}
-          </button>
+          </button> */}
         </div>
 
         <div className={styles.footer}>

@@ -1,7 +1,9 @@
 // app.js
+require("dotenv").config();
 const express = require('express');
 const cors = require('cors');
 const mainRouter = require('./router');
+const path = require('path');
 
 const app = express();
 
@@ -26,6 +28,18 @@ app.use(express.json());
 
 // Nhúng router
 app.use(mainRouter);
+
+app.use(
+  "/uploads",
+  express.static(
+    path.join(
+      __dirname,
+      "uploads"
+    )
+  )
+);
+
+
 
 // Xử lý lỗi 404 (nếu có)
 app.use((req, res) => {

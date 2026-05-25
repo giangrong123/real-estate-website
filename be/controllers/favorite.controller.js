@@ -1,51 +1,95 @@
-const favoritesData = require("../temp/favorites.json");
+const prisma = require("../libs/prisma");
 
+// ==============================
 // GET FAVORITES
-const getFavorites = (req, res) => {
-  const { userId } = req.params;
+// ==============================
+const getFavorites = async (req, res) => {
+  try {
+    const { userId } = req.params;
 
-  const userFav = favoritesData.find(
-    (item) => item.user_id === userId
-  );
+    const favorites = await prisma.favorite.findMany({
+      where: {
+        userId: Number(userId),
+      },
+    });
 
-  if (!userFav) {
-    return res.status(200).json([]);
+    // chỉ lấy propertyId
+    const favoriteIds = favorites.map((item) =>
+      String(item.propertyId)
+    );
+
+    return res.status(200).json({
+  message: "Success",
+  data: favoriteIds,
+});
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      message: "Lỗi lấy favorites",
+    });
   }
-
-  return res.status(200).json(userFav.property_ids);
 };
 
+// ==============================
 // TOGGLE FAVORITE
-const toggleFavorite = (req, res) => {
-  const { userId, propertyId } = req.body;
+// ==============================
+const toggleFavorite = async (req, res) => {
+  try {
+    const userId = req.user.id;
 
-  let userFav = favoritesData.find(
-    (item) => item.user_id === userId
-  );
+  const { propertyId } = req.body;
 
-  // nếu chưa có user -> tạo mới
-  if (!userFav) {
-    userFav = {
-      user_id: userId,
-      property_ids: [propertyId],
-    };
-    favoritesData.push(userFav);
-  } else {
-    const exists = userFav.property_ids.includes(propertyId);
+    // kiểm tra đã tồn tại chưa
+    const exists = await prisma.favorite.findFirst({
+      where: {
+        userId: Number(userId),
+        propertyId: Number(propertyId),
+      },
+    });
 
+    // nếu đã có -> xoá
     if (exists) {
-      userFav.property_ids = userFav.property_ids.filter(
-        (id) => id !== propertyId
-      );
+      await prisma.favorite.delete({
+        where: {
+          id: exists.id,
+        },
+      });
     } else {
-      userFav.property_ids.push(propertyId);
+      // chưa có -> thêm mới
+      await prisma.favorite.create({
+        data: {
+          userId: Number(userId),
+          propertyId: Number(propertyId),
+        },
+      });
     }
-  }
 
-  return res.status(200).json({
-    message: "Updated",
-    data: userFav.property_ids,
-  });
+    // lấy lại danh sách mới
+    const favorites = await prisma.favorite.findMany({
+      where: {
+        userId: Number(userId),
+      },
+    });
+
+    const favoriteIds = favorites.map((item) =>
+      String(item.propertyId)
+    );
+
+    return res.status(200).json({
+      message: "Updated",
+      data: favoriteIds,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      message: "Lỗi toggle favorite",
+    });
+  }
 };
 
-module.exports = { getFavorites, toggleFavorite };
+module.exports = {
+  getFavorites,
+  toggleFavorite,
+};

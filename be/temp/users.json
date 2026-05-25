@@ -3,7 +3,8 @@
     "id": 1,
     "email": "giang@gmail.com",
     "password": "123456",
-    "name": "Giang",
+    "name": "Hoang Giang",
+    "phone": "0123456789",
     "role": "user"
   },
   {
@@ -11,6 +12,7 @@
     "email": "admin@gmail.com",
     "password": "123456",
     "name": "Admin",
+    "phone": "0123456788",
     "role": "admin"
   }
 ]

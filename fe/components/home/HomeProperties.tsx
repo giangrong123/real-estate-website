@@ -2,27 +2,43 @@
 
 import Link from "next/link";
 import styles from "./styles/HomeProperties.module.css";
-import { useState } from "react";
-import { PROPERTIES_DATA } from "@/data/properties";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
+import { AppDispatch, RootState } from "@/stores/store";
+import { fetchProperties } from "@/stores/slices/propertySlice";
 
 export default function HomeProperties() {
-  const [limit, setLimit] = useState(8);
-  const [click, setClick] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
 
-  // lưu danh sách id đã like
+  const { properties, loading } = useSelector(
+    (state: RootState) => state.properties
+  );
+
+  // UI state
+  const [limit, setLimit] = useState(8);
   const [likedIds, setLikedIds] = useState<Set<number>>(new Set());
+
+  // 👉 CALL API
+  useEffect(() => {
+  dispatch(
+    fetchProperties({
+      page: 1,
+      limit: 20,
+    })
+  );
+}, []);
 
   function handleClick() {
     setLimit((prev) => prev + 8);
-    setClick(true);
   }
 
   function toggleLike(
     e: React.MouseEvent<HTMLButtonElement>,
     id: number
   ) {
-    e.preventDefault();   // chặn Link
-    e.stopPropagation(); // chặn bubbling
+    e.preventDefault();
+    e.stopPropagation();
 
     setLikedIds((prev) => {
       const next = new Set(prev);
@@ -35,8 +51,19 @@ export default function HomeProperties() {
     const now = new Date().getTime();
     const createdTime = new Date(createdAt).getTime();
     const diffTime = now - createdTime;
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
+    return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  }
+
+  if (loading) {
+    return (
+      <div className={styles.bgc}>
+        <section className={styles.news}>
+          <div className={styles.header}>
+            <h2 className={styles.title}>Đang tải bất động sản...</h2>
+          </div>
+        </section>
+      </div>
+    );
   }
 
   return (
@@ -47,7 +74,7 @@ export default function HomeProperties() {
         </div>
 
         <div className={styles.list}>
-          {PROPERTIES_DATA.slice(0, limit).map((item) => {
+          {properties.slice(0, limit).map((item) => {
             const liked = likedIds.has(item.id);
 
             return (
@@ -65,15 +92,14 @@ export default function HomeProperties() {
                     <p>{item.address}</p>
                     <span>{item.price} tỷ</span>
                     <span> · </span>
-                    <span>{item.area} m2</span>
+                    <span>{item.area} m²</span>
                   </div>
 
                   <div className={styles.content2}>
                     <span>
-                      Đăng {getDaysAgo(item.created_at)} ngày trước
+                      Đăng {getDaysAgo(item.createdAt)} ngày trước
                     </span>
 
-                    {/* LIKE BUTTON */}
                     <button
                       type="button"
                       onClick={(e) => toggleLike(e, item.id)}
@@ -90,15 +116,16 @@ export default function HomeProperties() {
           })}
         </div>
 
+        {/* FOOTER */}
         <div className={styles.footer}>
-          {click ? (
-            <Link href="/properties" className={styles.btn}>
-              Xem tiếp
-            </Link>
-          ) : (
+          {properties.length > limit ? (
             <button className={styles.btn} onClick={handleClick}>
               Xem thêm
             </button>
+          ) : (
+            <Link href="/properties" className={styles.btn}>
+              Xem tiếp
+            </Link>
           )}
         </div>
       </section>

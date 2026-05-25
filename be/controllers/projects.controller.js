@@ -1,60 +1,219 @@
-const projectsData = require("../temp/project.json");
-const usersData = require("../temp/users.json");
+const prisma = require("../libs/prisma");
 
-// GET ALL + SEARCH
-const getProjects = (req, res) => {
+// CREATE PROJECT
+const createProject = async (
+  req,
+  res
+) => {
   try {
-    const search = req.query.search;
+    const data = req.body;
 
-    if (!projectsData || projectsData.length === 0) {
-      return res.status(200).json([]);
-    }
+    const project =
+      await prisma.project.create({
+        data: {
+          thumbnail:
+            data.thumbnail,
 
-    // SEARCH
-    if (search) {
-      const query = search.toLowerCase();
+          name: data.name,
 
-      const result = projectsData.filter((item) => {
-        return (
-          item.name?.toLowerCase().includes(query) ||
-          item.address?.toLowerCase().includes(query)
-        );
+          description:
+            data.description,
+
+          investor:
+            data.investor,
+
+          status: data.status,
+
+          address:
+            data.address,
+
+          contactPhone:
+            data.contactPhone,
+
+          createdBy: req.admin.id,
+        },
       });
 
-      return res.status(200).json(result);
-    }
-
-    // ALL
-    return res.status(200).json(projectsData);
+    return res.json({
+      success: true,
+      data: project,
+    });
   } catch (error) {
     console.log(error);
+
     return res.status(500).json({
-      message: "Lỗi hệ thống",
+      success: false,
+      message:
+        "Tạo dự án thất bại",
     });
   }
 };
 
-// GET DETAIL
-const getProjectById = (req, res) => {
-  const { id } = req.params;
+// GET PROJECTS
+const getProjects = async (req, res) => {
+  try {
+    const page =
+      Number(req.query.page) || 1;
 
-  const project = projectsData.find((item) => String(item.id) === id);
+    const limit =
+      Number(req.query.limit) || 6;
 
-  if (!project) {
-    return res.status(404).json({
-      message: "Không tìm thấy dự án",
+    const skip =
+      (page - 1) * limit;
+
+    // total items
+    const totalProjects =
+      await prisma.project.count();
+
+    // data
+    const projects =
+      await prisma.project.findMany({
+        skip,
+        take: limit,
+
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+
+    return res.json({
+      success: true,
+
+      data: projects,
+
+      pagination: {
+        page,
+        limit,
+        totalProjects,
+
+        totalPages: Math.ceil(
+          totalProjects / limit
+        ),
+      },
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      success: false,
     });
   }
+};
 
-  const user = usersData?.find((u) => u.id === project.created_by);
+// GET PROJECT DETAIL
+const getProjectById = async (
+  req,
+  res
+) => {
+  try {
+    const { id } = req.params;
 
-  return res.status(200).json({
-    ...project,
-    user,
-  });
+    const project =
+      await prisma.project.findUnique({
+        where: {
+          id: Number(id),
+        },
+
+        include: {
+          admin: true,
+          projectImages: true,
+        },
+      });
+
+    return res.json({
+      success: true,
+      data: project,
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      success: false,
+    });
+  }
+};
+
+// UPDATE PROJECT
+const updateProject = async (
+  req,
+  res
+) => {
+  try {
+    const { id } = req.params;
+
+    const data = req.body;
+
+    const updated =
+      await prisma.project.update({
+        where: {
+          id: Number(id),
+        },
+
+        data: {
+          thumbnail:
+            data.thumbnail,
+
+          name: data.name,
+
+          description:
+            data.description,
+
+          investor:
+            data.investor,
+
+          status: data.status,
+
+          address:
+            data.address,
+
+          contactPhone:
+            data.contactPhone,
+        },
+      });
+
+    return res.json({
+      success: true,
+      data: updated,
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      success: false,
+    });
+  }
+};
+
+// DELETE PROJECT
+const deleteProject = async (
+  req,
+  res
+) => {
+  try {
+    const { id } = req.params;
+
+    await prisma.project.delete({
+      where: {
+        id: Number(id),
+      },
+    });
+
+    return res.json({
+      success: true,
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      success: false,
+    });
+  }
 };
 
 module.exports = {
+  createProject,
   getProjects,
   getProjectById,
+  updateProject,
+  deleteProject,
 };

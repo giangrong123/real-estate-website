@@ -1,0 +1,215 @@
+.wrapper {
+  min-height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 40px 20px;
+
+  background: #f5f7fb;
+}
+
+.card {
+  width: 100%;
+  max-width: 1100px;
+
+  min-height: 650px;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  background: #fff;
+
+  border-radius: 24px;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* ================= LEFT ================= */
+
+.imageBox {
+  position: relative;
+
+  background-image: url("https://images.unsplash.com/photo-1522708323590-d24dbb6b0267");
+
+  background-size: cover;
+  background-position: center;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+
+  background: rgba(0, 0, 0, 0.45);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  padding: 60px;
+
+  color: white;
+}
+
+.overlay h2 {
+  font-size: 42px;
+  font-weight: 700;
+
+  margin-bottom: 20px;
+}
+
+.overlay p {
+  font-size: 18px;
+  line-height: 1.7;
+
+  opacity: 0.9;
+}
+
+/* ================= RIGHT ================= */
+
+.formBox {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  padding: 60px;
+}
+
+.formBox h1 {
+  font-size: 36px;
+  font-weight: 700;
+
+  margin-bottom: 30px;
+
+  color: #111827;
+}
+
+/* ================= FORM ================= */
+
+.form {
+  display: flex;
+  flex-direction: column;
+
+  gap: 20px;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.group input {
+  width: 100%;
+
+  padding: 16px 18px;
+
+  border: 1px solid #d1d5db;
+
+  border-radius: 12px;
+
+  font-size: 16px;
+
+  outline: none;
+
+  transition: all 0.2s ease;
+}
+
+.group input:focus {
+  border-color: #2563eb;
+
+  box-shadow:
+    0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
+/* ================= BUTTON ================= */
+
+.form button {
+  margin-top: 10px;
+
+  padding: 16px;
+
+  border: none;
+
+  border-radius: 12px;
+
+  background: #2563eb;
+
+  color: white;
+
+  font-size: 16px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.form button:hover {
+  background: #1d4ed8;
+}
+
+.form button:disabled {
+  opacity: 0.7;
+
+  cursor: not-allowed;
+}
+
+/* ================= ERROR ================= */
+
+.error {
+  color: #dc2626;
+
+  font-size: 14px;
+}
+
+/* ================= SWITCH ================= */
+
+.switch {
+  margin-top: 24px;
+
+  font-size: 15px;
+
+  color: #6b7280;
+}
+
+.switch a {
+  color: #2563eb;
+
+  font-weight: 600;
+
+  text-decoration: none;
+}
+
+.switch a:hover {
+  text-decoration: underline;
+}
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 900px) {
+  .card {
+    grid-template-columns: 1fr;
+  }
+
+  .imageBox {
+    min-height: 250px;
+  }
+
+  .formBox {
+    padding: 40px 24px;
+  }
+
+  .overlay {
+    padding: 30px;
+  }
+
+  .overlay h2 {
+    font-size: 32px;
+  }
+}

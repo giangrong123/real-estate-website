@@ -13,6 +13,8 @@ import favoriteReducer from './slices/favoriteSlice';
 import propertyReducer from './slices/propertySlice';
 import projectReducer from './slices/projectSlice';
 import newsReducer from './slices/newsSlice';
+import userReducer from "./slices/userSlice";
+import uploadReducer from './slices/uploadSlice';
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -20,6 +22,8 @@ const rootReducer = combineReducers({
   properties: propertyReducer, 
   projects: projectReducer,
   news: newsReducer,
+  user: userReducer,
+  upload: uploadReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

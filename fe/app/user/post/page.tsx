@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
 import {
   useDispatch,
@@ -19,226 +19,169 @@ import type {
   AppDispatch,
 } from "@/stores/store";
 
+import styles from "./post.module.css";
+
 export default function UserPosts() {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch =
+    useDispatch<AppDispatch>();
 
-  // ===== REDUX =====
-  const { properties, loading, error } =
-    useSelector(
-      (state: RootState) => state.properties
-    );
-
-  const user = useSelector(
-    (state: RootState) => state.auth.user
+  // ===== STORE =====
+  const {
+    properties,
+    loading,
+    error,
+  } = useSelector(
+    (state: RootState) =>
+      state.properties
   );
 
-  // ===== FETCH POSTS =====
+  const user = useSelector(
+    (state: RootState) =>
+      state.auth.user
+  );
+
+  // ===== FETCH =====
   useEffect(() => {
     dispatch(fetchProperties());
   }, [dispatch]);
 
-  // ===== FILTER MY POSTS =====
-  const myPosts = properties.filter(
-    (item) =>
-      item.user_id === Number(user?.id)
-  );
+  // ===== MY POSTS =====
+  const myPosts = useMemo(() => {
+    if (!user) return [];
+
+    return properties.filter(
+      (item) =>
+        item.userId === Number(user.id)
+    );
+  }, [properties, user]);
 
   // ===== DELETE =====
   const handleDelete = async (
     id: number
   ) => {
-    const confirmDelete = confirm(
+    const ok = confirm(
       "Bạn có chắc muốn xoá tin này?"
     );
 
-    if (!confirmDelete) return;
+    if (!ok) return;
 
-    dispatch(deleteProperty(id));
+    try {
+      await dispatch(
+        deleteProperty(id)
+      );
+
+      alert("Xóa thành công 🎉");
+    } catch {
+      alert("Xóa thất bại");
+    }
   };
 
   return (
-    <div
-      style={{
-        padding: 20,
-      }}
-    >
-      {/* ===== HEADER ===== */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent:
-            "space-between",
-          alignItems: "center",
-          marginBottom: 20,
-        }}
-      >
+    <div className={styles.wrapper}>
+      {/* HEADER */}
+      <div className={styles.header}>
         <h1>Tin đã đăng</h1>
 
         <Link href="/user/post/create">
           <button
-            style={{
-              padding:
-                "10px 16px",
-              borderRadius: 8,
-              cursor: "pointer",
-            }}
+            className={styles.addBtn}
           >
             + Đăng tin
           </button>
         </Link>
       </div>
 
-      {/* ===== LOADING ===== */}
+      {/* LOADING */}
       {loading && (
-        <p>Đang tải dữ liệu...</p>
+        <p className={styles.loading}>
+          Đang tải...
+        </p>
       )}
 
-      {/* ===== ERROR ===== */}
+      {/* ERROR */}
       {error && (
-        <p style={{ color: "red" }}>
+        <p className={styles.error}>
           {error}
         </p>
       )}
 
-      {/* ===== EMPTY ===== */}
+      {/* EMPTY */}
       {!loading &&
         myPosts.length === 0 && (
-          <div
-            style={{
-              background: "#fff",
-              padding: 20,
-              borderRadius: 10,
-            }}
-          >
-            <p>
-              Bạn chưa đăng tin nào
-            </p>
+          <div className={styles.empty}>
+            Chưa có tin nào
           </div>
         )}
 
-      {/* ===== LIST ===== */}
-      <div
-        style={{
-          marginTop: 20,
-        }}
-      >
+      {/* LIST */}
+      <div className={styles.list}>
         {myPosts.map((post) => (
           <div
             key={post.id}
-            style={{
-              background: "#fff",
-              padding: 15,
-              marginBottom: 12,
-              borderRadius: 12,
-              display: "flex",
-              justifyContent:
-                "space-between",
-              alignItems: "center",
-              gap: 20,
-            }}
+            className={styles.card}
           >
-            {/* ===== LEFT ===== */}
-            <div
-              style={{
-                display: "flex",
-                gap: 15,
-                alignItems: "center",
-              }}
-            >
+            {/* LEFT */}
+            <div className={styles.left}>
               <img
                 src={post.thumbnail}
+                className={
+                  styles.thumb
+                }
                 alt={post.title}
-                style={{
-                  width: 120,
-                  height: 90,
-                  objectFit: "cover",
-                  borderRadius: 10,
-                }}
               />
 
-              <div>
-                <h3
-                  style={{
-                    marginBottom: 6,
-                  }}
+              <div
+                className={
+                  styles.info
+                }
+              >
+                <h3>{post.title}</h3>
+
+                <p
+                  className={
+                    styles.price
+                  }
                 >
-                  {post.title}
-                </h3>
-
-                <p>
-                  💰 {post.price} tỷ
+                  {post.price} tỷ
                 </p>
 
-                <p>
-                  📍 {post.address}
-                </p>
-
-                <p>
-                  📐 {post.area} m²
-                </p>
-
-                {/* ===== STATUS ===== */}
-                <div
-                  style={{
-                    marginTop: 8,
-                  }}
+                <p
+                  className={
+                    styles.address
+                  }
                 >
-                  {post.is_approved ? (
-                    <span
-                      style={{
-                        color: "green",
-                        fontWeight: 600,
-                      }}
-                    >
-                      ✔ Đã duyệt
-                    </span>
-                  ) : (
-                    <span
-                      style={{
-                        color: "orange",
-                        fontWeight: 600,
-                      }}
-                    >
-                      ⏳ Chờ duyệt
-                    </span>
-                  )}
-                </div>
+                  {post.address}
+                </p>
               </div>
             </div>
 
-            {/* ===== ACTION ===== */}
+            {/* ACTIONS */}
             <div
-              style={{
-                display: "flex",
-                gap: 10,
-              }}
+              className={
+                styles.actions
+              }
             >
+              {/* EDIT */}
               <Link
                 href={`/user/post/edit/${post.id}`}
               >
                 <button
-                  style={{
-                    cursor: "pointer",
-                    padding:
-                      "8px 12px",
-                    borderRadius: 8,
-                  }}
+                  className={
+                    styles.btnEdit
+                  }
                 >
                   ✏️ Sửa
                 </button>
               </Link>
 
+              {/* DELETE */}
               <button
                 onClick={() =>
                   handleDelete(post.id)
                 }
-                style={{
-                  color: "red",
-                  cursor: "pointer",
-                  padding:
-                    "8px 12px",
-                  borderRadius: 8,
-                }}
+                className={
+                  styles.btnDelete
+                }
               >
                 🗑️ Xoá
               </button>
