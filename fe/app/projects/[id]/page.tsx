@@ -8,10 +8,9 @@ import { RootState, AppDispatch } from "@/stores/store";
 import { fetchProjectById } from "@/stores/slices/projectSlice";
 
 import styles from "./detail.module.css";
-import HomeProject from "@/components/home/HomeProject";
 
-const formatDate = (date: string) =>
-  new Date(date).toLocaleDateString("vi-VN");
+const formatDate = (date?: string) =>
+  date ? new Date(date).toLocaleDateString("vi-VN") : "—";
 
 export default function ProjectDetailPage() {
   const { id } = useParams();
@@ -33,22 +32,23 @@ export default function ProjectDetailPage() {
 
   const project = selectedProject;
 
+  // ===== FIX FIELD FROM BACKEND =====
+  const phone = project.contactPhone;
+  const createdAt = project.createdAt;
+  const updatedAt = project.updatedAt;
+
   const images =
-    project.images && project.images.length > 0
-      ? project.images
+    project.projectImages && project.projectImages.length > 0
+      ? project.projectImages
       : [project.thumbnail || "/placeholder.jpg"];
 
   return (
     <section className={styles.wrapper}>
-
       <div className={styles.layout}>
-
         {/* ================= LEFT ================= */}
-        <div className={styles.left + " " + styles.fadeIn}>
-
+        <div className={styles.left}>
           {/* GALLERY */}
           <div className={styles.gallery}>
-
             <div className={styles.mainWrapper}>
               <img
                 src={images[activeImg]}
@@ -68,10 +68,10 @@ export default function ProjectDetailPage() {
                       ? styles.thumbActive
                       : styles.thumb
                   }
+                  alt=""
                 />
               ))}
             </div>
-
           </div>
 
           {/* TITLE */}
@@ -84,13 +84,20 @@ export default function ProjectDetailPage() {
               <span>Chủ đầu tư</span>
               <b>{project.investor || "Đang cập nhật"}</b>
             </div>
+
             <div>
               <span>Trạng thái</span>
               <b>{project.status}</b>
             </div>
+
             <div>
-              <span>Phê duyệt</span>
-              <b>{project.is_approved ? "Đã duyệt" : "Chưa duyệt"}</b>
+              <span>Ngày tạo</span>
+              <b>{formatDate(createdAt)}</b>
+            </div>
+
+            <div>
+              <span>Cập nhật</span>
+              <b>{formatDate(updatedAt)}</b>
             </div>
           </div>
 
@@ -99,54 +106,42 @@ export default function ProjectDetailPage() {
             <h2>Giới thiệu dự án</h2>
             <p>{project.description || "Chưa có mô tả"}</p>
           </div>
-
-          <div className={styles.section}>
-            <h2>Thông tin</h2>
-            <ul>
-              <li>
-                <b>Ngày tạo:</b>{" "}
-                {project.created_at ? formatDate(project.created_at) : "—"}
-              </li>
-              <li>
-                <b>Cập nhật:</b>{" "}
-                {project.updated_at ? formatDate(project.updated_at) : "—"}
-              </li>
-            </ul>
-          </div>
-
         </div>
 
         {/* ================= RIGHT ================= */}
-        <aside className={styles.right + " " + styles.fadeIn}>
-
+        <aside className={styles.right}>
           <div className={styles.contactBox}>
-
             <div className={styles.user}>
-              <img src="/avatar-default.png" className={styles.avatar} />
+              <img
+                src="/avatar-default.png"
+                className={styles.avatar}
+                alt="admin"
+              />
+
               <div>
-                <p className={styles.userName}>Ban quản lý dự án</p>
+                <p className={styles.userName}>
+                  Ban quản lý dự án
+                </p>
                 <span className={styles.userRole}>
-                  {project.investor || "Chủ đầu tư"}
+                  {project.investor}
                 </span>
               </div>
             </div>
 
-            <button className={styles.callBtn}>
-              📞 Gọi ngay: {project.contact_phone || "Liên hệ"}
-            </button>
+            {/* PHONE CALL */}
+            <a
+              href={phone ? `tel:${phone}` : "#"}
+              className={styles.callBtn}
+            >
+              📞 Gọi ngay: {phone || "Liên hệ"}
+            </a>
 
-            <button className={styles.zaloBtn}>
-              💬 Nhận tư vấn Zalo
-            </button>
-
+            <p className={styles.note}>
+              Liên hệ trực tiếp để được tư vấn chi tiết về dự án
+            </p>
           </div>
-
         </aside>
-
       </div>
-
-      {/* <HomeProject /> */}
-
     </section>
   );
 }

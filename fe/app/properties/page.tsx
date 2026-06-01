@@ -461,124 +461,80 @@ export default function PropertiesPage() {
   // ================= FETCH =================
   useEffect(() => {
     const search =
-      searchParams.get(
-        "search"
-      ) || "";
+      searchParams.get("search") || "";
 
     const minPrice =
-      searchParams.get(
-        "minPrice"
-      );
+      searchParams.get("minPrice");
 
     const maxPrice =
-      searchParams.get(
-        "maxPrice"
-      );
+      searchParams.get("maxPrice");
 
     const minArea =
-      searchParams.get(
-        "minArea"
-      );
+      searchParams.get("minArea");
 
     const maxArea =
-      searchParams.get(
-        "maxArea"
-      );
+      searchParams.get("maxArea");
 
     const typeId =
-      searchParams.get(
-        "typeId"
-      );
+      searchParams.get("typeId");
 
     const bedrooms =
-      searchParams.get(
-        "bedrooms"
-      );
+      searchParams.get("bedrooms");
 
     const direction =
-      searchParams.get(
-        "direction"
-      );
+      searchParams.get("direction");
 
     const furniture =
-      searchParams.get(
-        "furniture"
-      );
+      searchParams.get("furniture");
 
-    const isFeatured =
-      searchParams.get(
-        "isFeatured"
-      );
+    const legalStatus =
+      searchParams.get("legalStatus");
 
     const sort =
-      searchParams.get(
-        "sort"
-      ) || "newest";
+      searchParams.get("sort") ||
+      "newest";
 
-    const page =
-      Number(
-        searchParams.get(
-          "page"
-        ) || 1
-      );
+    const page = Number(
+      searchParams.get("page") || 1
+    );
 
     dispatch(
       fetchProperties({
         search,
 
-        minPrice:
-          minPrice
-            ? Number(
-              minPrice
-            )
-            : undefined,
+        minPrice: minPrice
+          ? Number(minPrice)
+          : undefined,
 
-        maxPrice:
-          maxPrice
-            ? Number(
-              maxPrice
-            )
-            : undefined,
+        maxPrice: maxPrice
+          ? Number(maxPrice)
+          : undefined,
 
-        minArea:
-          minArea
-            ? Number(
-              minArea
-            )
-            : undefined,
+        minArea: minArea
+          ? Number(minArea)
+          : undefined,
 
-        maxArea:
-          maxArea
-            ? Number(
-              maxArea
-            )
-            : undefined,
+        maxArea: maxArea
+          ? Number(maxArea)
+          : undefined,
 
-        typeId:
-          typeId
-            ? Number(
-              typeId
-            )
-            : undefined,
+        typeId: typeId
+          ? Number(typeId)
+          : undefined,
 
-        bedrooms:
-          bedrooms
-            ? Number(
-              bedrooms
-            )
-            : undefined,
+        bedrooms: bedrooms
+          ? Number(bedrooms)
+          : undefined,
 
         direction:
-          direction ||
-          undefined,
+          direction || undefined,
 
         furniture:
-          furniture ||
-          undefined,
+          furniture || undefined,
 
-        isFeatured:
-          isFeatured ===
-          "true",
+        legalStatus:
+          legalStatus ||
+          undefined,
 
         sort,
 

@@ -12,6 +12,8 @@ const auth = require("./middleware/auth.middleware");
 
 const adminAuth = require("./middleware/adminAuth.middleware");
 
+const authAll = require("./middleware/authAll")
+
 const validateCreateProperty = require("./middleware/propertyValidation.middleware");
 
 const validateProject = require("./middleware/projectValidation.middleware");
@@ -49,7 +51,7 @@ router.put("/admin/news/:id",adminAuth, newsController.updateNews);
 router.delete("/admin/news/:id",adminAuth, newsController.deleteNews);
 
 // ===== PROPERTIES =====
-router.put("/properties/:id",auth, propertyController.updateProperty);
+router.put("/properties/:id",authAll, propertyController.updateProperty);
 router.delete("/properties/:id",auth, propertyController.deleteProperty);
 router.post("/properties",auth, validateCreateProperty, propertyController.createProperty);
 

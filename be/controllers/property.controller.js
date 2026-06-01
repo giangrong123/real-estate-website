@@ -259,7 +259,8 @@ const getPublicProperties = async (req, res) => {
     const direction = req.query.direction || undefined;
     const furniture = req.query.furniture || undefined;
 
-    const isFeatured = req.query.isFeatured === "true";
+    // const isFeatured = req.query.isFeatured === "true";
+    const legalStatus = req.query.legalStatus || undefined;
 
     const sort = req.query.sort || "newest";
 
@@ -267,28 +268,44 @@ const getPublicProperties = async (req, res) => {
     const andConditions = [];
 
     // 🔎 SEARCH (FIX PRISMA MODE ISSUE)
+    // if (search) {
+    //   const keyword = search.trim();
+
+    //   andConditions.push({
+    //     OR: [
+    //       {
+    //         title: {
+    //           contains: keyword,
+    //         },
+    //       },
+
+    //       {
+    //         address: {
+    //           contains: keyword,
+    //         },
+    //       },
+
+    //       {
+    //         description: {
+    //           contains: keyword,
+    //         },
+    //       },
+    //     ],
+    //   });
+    // }
+
+    // SEARCH (FIX PRO)
     if (search) {
       const keyword = search.trim();
 
       andConditions.push({
         OR: [
-          {
-            title: {
-              contains: keyword,
-            },
-          },
-
-          {
-            address: {
-              contains: keyword,
-            },
-          },
-
-          {
-            description: {
-              contains: keyword,
-            },
-          },
+          { title: { contains: keyword } },
+          { address: { contains: keyword } },
+          { description: { contains: keyword } },
+          { direction: { contains: keyword } },
+          { furniture: { contains: keyword } },
+          { legalStatus: { contains: keyword } },
         ],
       });
     }
@@ -335,9 +352,11 @@ const getPublicProperties = async (req, res) => {
       andConditions.push({ furniture });
     }
 
-    // ⭐ FEATURED
-    if (isFeatured) {
-      andConditions.push({ isFeatured: true });
+    // 📜 LEGAL STATUS
+    if (legalStatus) {
+      andConditions.push({
+        legalStatus,
+      });
     }
 
     // ================= SORT =================
@@ -577,9 +596,15 @@ const updateProperty = async (req, res) => {
       });
     }
 
+    // ===== CURRENT USER =====
+
+    const currentUserId = req.user?.id;
+
+    const isAdmin = !!req.admin;
+
     // ===== OWNERSHIP CHECK =====
 
-    if (existingProperty.userId !== req.user.id) {
+    if (existingProperty.userId !== currentUserId && !isAdmin) {
       return res.status(403).json({
         message: "Forbidden",
       });
@@ -594,27 +619,44 @@ const updateProperty = async (req, res) => {
 
       data: {
         title: data.title,
+
         slug: data.slug,
+
         thumbnail: data.thumbnail,
+
         description: data.description,
+
         address: data.address,
+
         price: data.price,
+
         area: data.area,
+
         bedrooms: data.bedrooms,
+
         bathrooms: data.bathrooms,
+
         direction: data.direction,
+
         legalStatus: data.legalStatus,
+
         furniture: data.furniture,
+
         status: data.status,
+
         isFeatured: data.isFeatured,
+
         isApproved: data.isApproved,
       },
     });
 
     res.status(200).json(property);
   } catch (error) {
+    console.log(error);
+
     res.status(500).json({
       message: "Lỗi update property",
+
       error,
     });
   }

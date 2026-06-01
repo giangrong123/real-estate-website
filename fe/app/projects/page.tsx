@@ -125,83 +125,35 @@ export default function ProjectPage() {
       </div>
 
       {/* PAGINATION */}
-      {!search && (
-        <div
-          style={{
-            display: "flex",
-            justifyContent:
-              "center",
-            gap: "10px",
-            marginTop: "30px",
-            alignItems: "center",
-          }}
-        >
-          {/* PREV */}
-          <button
-            disabled={page === 1}
-            onClick={() =>
-              setPage(page - 1)
-            }
-          >
-            Prev
-          </button>
+<div className={styles.pagination}>
+  <button
+    className={`${styles.pageBtn} ${styles.navBtn}`}
+    disabled={page === 1}
+    onClick={() => setPage(page - 1)}
+  >
+    Prev
+  </button>
 
-          {/* PAGE NUMBERS */}
-          {Array.from(
-            { length: totalPages },
-            (_, index) => (
-              <button
-                key={index}
-                onClick={() =>
-                  setPage(index + 1)
-                }
-                style={{
-                  fontWeight:
-                    page ===
-                      index + 1
-                      ? "bold"
-                      : "normal",
+  {Array.from({ length: totalPages }, (_, index) => (
+    <button
+      key={index}
+      onClick={() => setPage(index + 1)}
+      className={`${styles.pageBtn} ${
+        page === index + 1 ? styles.active : ""
+      }`}
+    >
+      {index + 1}
+    </button>
+  ))}
 
-                  background:
-                    page ===
-                      index + 1
-                      ? "black"
-                      : "white",
-
-                  color:
-                    page ===
-                      index + 1
-                      ? "white"
-                      : "black",
-
-                  padding:
-                    "6px 12px",
-
-                  border:
-                    "1px solid #ccc",
-
-                  cursor:
-                    "pointer",
-                }}
-              >
-                {index + 1}
-              </button>
-            )
-          )}
-
-          {/* NEXT */}
-          <button
-            disabled={
-              page === totalPages
-            }
-            onClick={() =>
-              setPage(page + 1)
-            }
-          >
-            Next
-          </button>
-        </div>
-      )}
+  <button
+    className={`${styles.pageBtn} ${styles.navBtn}`}
+    disabled={page === totalPages}
+    onClick={() => setPage(page + 1)}
+  >
+    Next
+  </button>
+</div>
     </section>
   );
 }

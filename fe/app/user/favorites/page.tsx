@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 
 import {
   useDispatch,
@@ -19,7 +19,7 @@ import {
   fetchFavorites,
 } from "@/stores/slices/favoriteSlice";
 
-import { fetchProperties } from "@/stores/slices/propertySlice";
+import styles from "./favorites.module.css";
 
 export default function Favorites() {
   const dispatch =
@@ -32,67 +32,40 @@ export default function Favorites() {
   );
 
   // ===== FAVORITES =====
-  const { favoriteIds } =
-    useSelector(
-      (state: RootState) =>
-        state.favorites
-    );
-
-  // ===== PROPERTIES =====
-  const { properties, loading } =
-    useSelector(
-      (state: RootState) =>
-        state.properties
-    );
+  const {
+    favorites,
+    loading,
+  } = useSelector(
+    (state: RootState) =>
+      state.favorites
+  );
 
   // ===== FETCH DATA =====
   useEffect(() => {
     if (!user) return;
 
-    // favorites
     dispatch(
       fetchFavorites(
         String(user.id)
       )
     );
-
-    // properties
-    if (properties.length === 0) {
-      dispatch(fetchProperties());
-    }
   }, [
     dispatch,
     user,
-    properties.length,
   ]);
-
-  // ===== FILTER FAVORITES =====
-  const favoritePosts =
-    useMemo(() => {
-      return properties.filter((p) =>
-        favoriteIds.includes(
-          String(p.id)
-        )
-      );
-    }, [
-      properties,
-      favoriteIds,
-    ]);
 
   // ===== NOT LOGIN =====
   if (!user) {
     return (
-      <div
-        style={{
-          textAlign: "center",
-          marginTop: 50,
-        }}
-      >
-        <p>
+      <div className={styles.empty}>
+        <p className={styles.emptyTitle}>
           Vui lòng đăng nhập
         </p>
 
-        <Link href="/auth/login">
+        <Link
+          href="/auth/login"
+          className={styles.emptyLink}
+        >
           Đăng nhập ngay
         </Link>
       </div>
@@ -102,31 +75,24 @@ export default function Favorites() {
   // ===== LOADING =====
   if (loading) {
     return (
-      <div
-        style={{
-          textAlign: "center",
-          marginTop: 50,
-        }}
-      >
+      <div className={styles.loading}>
         Đang tải...
       </div>
     );
   }
 
   // ===== EMPTY =====
-  if (favoritePosts.length === 0) {
+  if (favorites.length === 0) {
     return (
-      <div
-        style={{
-          textAlign: "center",
-          marginTop: 50,
-        }}
-      >
-        <p>
+      <div className={styles.empty}>
+        <p className={styles.emptyTitle}>
           Bạn chưa lưu tin nào ❤️
         </p>
 
-        <Link href="/properties">
+        <Link
+          href="/properties"
+          className={styles.emptyLink}
+        >
           Khám phá nhà đất ngay
         </Link>
       </div>
@@ -134,29 +100,20 @@ export default function Favorites() {
   }
 
   return (
-    <div
-      style={{
-        maxWidth: 900,
-        margin: "0 auto",
-        padding: "20px",
-      }}
-    >
+    <div className={styles.wrapper}>
       {/* TITLE */}
-      <h1>
-        Tin đã lưu (
-        {
-          favoritePosts.length
-        }
-        )
+      <h1 className={styles.title}>
+        Tin đã lưu
+
+        <span className={styles.count}>
+          {" "}
+          ({favorites.length})
+        </span>
       </h1>
 
       {/* LIST */}
-      <div
-        style={{
-          marginTop: 20,
-        }}
-      >
-        {favoritePosts.map(
+      <div className={styles.grid}>
+        {favorites.map(
           (item) => {
             const itemId =
               String(item.id);
@@ -164,26 +121,7 @@ export default function Favorites() {
             return (
               <div
                 key={itemId}
-                style={{
-                  background:
-                    "#fff",
-
-                  padding: 15,
-
-                  marginBottom: 15,
-
-                  borderRadius: 12,
-
-                  display: "flex",
-
-                  gap: 15,
-
-                  alignItems:
-                    "center",
-
-                  boxShadow:
-                    "0 2px 10px rgba(0,0,0,0.08)",
-                }}
+                className={styles.card}
               >
                 {/* IMAGE */}
                 <img
@@ -193,77 +131,95 @@ export default function Favorites() {
                   alt={
                     item.title
                   }
-                  style={{
-                    width: 140,
-
-                    height: 90,
-
-                    objectFit:
-                      "cover",
-
-                    borderRadius: 8,
-                  }}
+                  className={
+                    styles.image
+                  }
                 />
 
-                {/* INFO */}
+                {/* CONTENT */}
                 <div
-                  style={{
-                    flex: 1,
-                  }}
+                  className={
+                    styles.content
+                  }
                 >
-                  <h3>
-                    {item.title}
-                  </h3>
-
-                  <p>
-                    💰{" "}
-                    {item.price} tỷ
-                  </p>
-
-                  <p>
-                    📍{" "}
-                    {
-                      item.address
+                  {/* INFO */}
+                  <div
+                    className={
+                      styles.info
                     }
-                  </p>
-                </div>
-
-                {/* ACTIONS */}
-                <div
-                  style={{
-                    display:
-                      "flex",
-
-                    flexDirection:
-                      "column",
-
-                    gap: 10,
-                  }}
-                >
-                  {/* VIEW */}
-                  <Link
-                    href={`/properties/${itemId}`}
                   >
-                    <button>
-                      👁️ Xem
+                    <h3
+                      className={
+                        styles.propertyTitle
+                      }
+                    >
+                      {item.title}
+                    </h3>
+
+                    <p
+                      className={
+                        styles.price
+                      }
+                    >
+                      💰{" "}
+                      {item.price} tỷ
+                    </p>
+
+                    <p
+                      className={
+                        styles.address
+                      }
+                    >
+                      📍{" "}
+                      {
+                        item.address
+                      }
+                    </p>
+                  </div>
+
+                  {/* ACTIONS */}
+                  <div
+                    className={
+                      styles.actions
+                    }
+                  >
+                    <Link
+                      href={`/properties/${itemId}`}
+                    >
+                      <button
+                        className={
+                          styles.viewBtn
+                        }
+                      >
+                        👁️ Xem chi tiết
+                      </button>
+                    </Link>
+
+                    <button
+                      className={
+                        styles.removeBtn
+                      }
+                      // onClick={() =>
+                      //   dispatch(
+                      //     toggleFavoriteAPI(
+                      //       itemId
+                      //     )
+                      //   )
+                      onClick={() => {
+  dispatch(toggleFavoriteAPI(itemId, String(user.id)));
+
+  // 🔥 OPTIMISTIC UI: remove ngay lập tức
+  dispatch({
+    type: "SET_FAVORITES",
+    payload: favorites.filter(
+      (p) => String(p.id) !== itemId
+    ),
+  });
+}}
+                    >
+                      ❌ Bỏ lưu
                     </button>
-                  </Link>
-
-                  {/* REMOVE */}
-                  <button
-                    onClick={() =>
-                      dispatch(
-                        toggleFavoriteAPI(
-                          String(
-                            user.id
-                          ),
-                          itemId
-                        )
-                      )
-                    }
-                  >
-                    ❌ Bỏ lưu
-                  </button>
+                  </div>
                 </div>
               </div>
             );

@@ -8,10 +8,10 @@ export type Project = {
   address: string;
   is_approved: boolean;
   created_by: number;
-  created_at: string;
-  updated_at: string;
-  contact_phone?: string;
+  createdAt: string;
+  updatedAt: string;
+  contactPhone?: string;
 
   // 🔥 ADD THIS (gallery images)
-  images?: string[];
+  projectImages?: string[];
 };

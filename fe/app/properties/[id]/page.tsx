@@ -28,14 +28,14 @@ export default function PropertyDetailPage() {
   const [showPhone, setShowPhone] = useState(false);
 
   useEffect(() => {
-  if (!id) return;
+    if (!id) return;
 
-  const fetchData = async () => {
-    await dispatch(fetchPropertyById(String(id)));
-  };
+    const fetchData = async () => {
+      await dispatch(fetchPropertyById(String(id)));
+    };
 
-  fetchData();
-}, [id]);
+    fetchData();
+  }, [id]);
 
   if (loading) return <div className={styles.loading}>Đang tải...</div>;
   if (error) return <div className={styles.error}>{error}</div>;
@@ -128,7 +128,7 @@ export default function PropertyDetailPage() {
         </div>
 
         {/* RIGHT */}
-        <aside className={styles.sidebar}>
+        {/* <aside className={styles.sidebar}>
           <div className={styles.contactBox}>
             <div className={styles.user}>
               <img
@@ -150,6 +150,24 @@ export default function PropertyDetailPage() {
             </button>
 
             <button className={styles.zaloBtn}>💬 Chat Zalo</button>
+          </div>
+        </aside> */}
+
+        {/* RIGHT */}
+        <aside className={styles.sidebar}>
+          <div className={styles.contactBox}>
+            <div className={styles.contactTitle}>Liên hệ người đăng</div>
+
+            <div className={styles.contactName}>
+              {user?.name || "Người đăng"}
+            </div>
+
+            <button
+              className={styles.callBtn}
+              onClick={() => setShowPhone(true)}
+            >
+              📞 {showPhone ? user?.phone || "Không có" : "Hiện số điện thoại"}
+            </button>
           </div>
         </aside>
       </div>

@@ -90,17 +90,79 @@ const adminLogin = async (req, res) => {
 module.exports = { adminLogin };
 
 // ===== GET USERS =====
-const getUsers = async (req, res) => {
+// const getUsers = async (req, res) => {
+//   try {
+//     const users = await prisma.user.findMany({
+//       orderBy: {
+//         createdAt: "asc",
+//       },
+//     });
+
+//     return res.status(200).json({
+//       success: true,
+//       data: users,
+//     });
+//   } catch (error) {
+//     console.log(error);
+
+//     return res.status(500).json({
+//       success: false,
+//       message: "Lỗi server",
+//     });
+//   }
+// };
+
+const getUsers = async (
+  req,
+  res
+) => {
   try {
-    const users = await prisma.user.findMany({
-      orderBy: {
-        createdAt: "asc",
-      },
-    });
+    // ================= QUERY =================
+
+    const page =
+      Number(req.query.page) || 1;
+
+    const limit =
+      Number(req.query.limit) || 5;
+
+    const skip =
+      (page - 1) * limit;
+
+    // ================= GET USERS =================
+
+    const users =
+      await prisma.user.findMany({
+        skip,
+        take: limit,
+
+        orderBy: {
+          createdAt: "asc",
+        },
+      });
+
+    // ================= TOTAL USERS =================
+
+    const totalUsers =
+      await prisma.user.count();
+
+    // ================= TOTAL PAGES =================
+
+    const totalPages =
+      Math.ceil(
+        totalUsers / limit
+      );
 
     return res.status(200).json({
       success: true,
+
       data: users,
+
+      pagination: {
+        page,
+        limit,
+        totalUsers,
+        totalPages,
+      },
     });
   } catch (error) {
     console.log(error);
@@ -111,6 +173,8 @@ const getUsers = async (req, res) => {
     });
   }
 };
+
+
 
 // const getAdminProperties = async (
 //   req,

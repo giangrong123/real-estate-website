@@ -1,20 +1,135 @@
-/* Wrapper của trang */
 .wrapper {
-  padding: 24px;
-  max-width: 1000px;
-  margin: 0 auto;
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 20px;
 }
 
-/* Tiêu đề */
+/* ================= TITLE ================= */
 .title {
-  font-size: 28px;
-  font-weight: 700;
-  margin: 24px 0;
+  font-size: 26px;
+  font-weight: 900;
+  color: #0f172a;
+
+  margin-bottom: 24px;
+  letter-spacing: -0.5px;
 }
 
-/* Danh sách BĐS – LIST VIEW */
+/* ================= GRID ================= */
 .grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+
+/* ================= STATES ================= */
+.loading,
+.error {
+  text-align: center;
+  padding: 80px 20px;
+
+  font-size: 16px;
+  font-weight: 600;
+
+  color: #475569;
+}
+
+.error {
+  color: #ef4444;
+}
+
+/* EMPTY STATE */
+.noResult {
+  grid-column: 1 / -1;
+
+  text-align: center;
+  padding: 60px 20px;
+
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 16px;
+
+  color: #64748b;
+  font-weight: 600;
+}
+
+/* ================= PAGINATION ================= */
+.pagination {
   display: flex;
-  flex-direction: column;
-  gap: 24px;
+  justify-content: center;
+  align-items: center;
+
+  gap: 10px;
+
+  margin-top: 40px;
+}
+
+/* BASE BUTTON */
+.pageBtn {
+  min-width: 40px;
+  height: 40px;
+
+  padding: 0 12px;
+
+  border-radius: 12px;
+
+  border: 1px solid #e2e8f0;
+  background: #fff;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  color: #334155;
+
+  cursor: pointer;
+
+  transition: all 0.25s ease;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pageBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.08);
+  border-color: #cbd5e1;
+}
+
+/* ACTIVE PAGE */
+.active {
+  background: linear-gradient(90deg, #ef4444, #f97316);
+  color: #fff;
+  border: none;
+
+  box-shadow: 0 10px 25px rgba(239, 68, 68, 0.25);
+}
+
+/* DISABLED */
+.pageBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* NAV BUTTONS */
+.navBtn {
+  padding: 0 14px;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .title {
+    font-size: 20px;
+  }
 }

@@ -74,10 +74,10 @@ async function main() {
   // =========================
   await prisma.propertyType.createMany({
   data: [
-    { name: "Nhà phố", slug: "nha-pho" },
-    { name: "Chung cư", slug: "chung-cu" },
-    { name: "Đất nền", slug: "dat-nen" },
-    { name: "Biệt thự", slug: "biet-thu" },
+    { name: "Nhà phố" },
+    { name: "Chung cư" },
+    { name: "Đất nền" },
+    { name: "Biệt thự" },
   ],
   skipDuplicates: true,
 });
@@ -91,7 +91,6 @@ async function main() {
     const property = await prisma.property.create({
       data: {
         title: item.title,
-        slug: item.slug,
         thumbnail: item.thumbnail,
         description: item.description,
         address: item.address,

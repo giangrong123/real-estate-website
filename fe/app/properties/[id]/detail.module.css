@@ -1,57 +1,72 @@
-/* ===== WRAPPER ===== */
 .wrapper {
-  background: #f6f8fb;
-  padding: 40px 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top, #eef2ff, transparent 40%),
+    linear-gradient(135deg, #f8fafc, #f1f5f9);
+  padding: 48px 20px;
 }
 
-/* ===== LAYOUT ===== */
+/* LAYOUT */
 .container {
-  max-width: 1200px;
-  margin: auto;
+  max-width: 1180px;
+  margin: 0 auto;
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 1.7fr 1fr;
   gap: 32px;
+  align-items: start;
 }
 
-/* ===== MAIN ===== */
+/* LEFT */
 .main {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 22px;
 }
 
-/* ===== HEADER ===== */
+/* HERO HEADER */
+.header {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  padding: 26px;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.08);
+}
+
 .header h1 {
   font-size: 28px;
-  font-weight: 700;
-  line-height: 1.3;
+  font-weight: 900;
+  color: #0f172a;
+  letter-spacing: -0.5px;
 }
 
 .header p {
-  color: #666;
   margin-top: 6px;
+  color: #64748b;
 }
 
-/* ===== PRICE ===== */
+/* PRICE HERO */
 .priceBox {
-  margin-top: 10px;
+  margin-top: 16px;
   display: flex;
-  align-items: center;
-  gap: 16px;
+  align-items: baseline;
+  gap: 14px;
 }
 
 .price {
-  font-size: 30px;
-  font-weight: 800;
-  color: #e53935;
+  font-size: 26px;
+  font-weight: 900;
+  background: linear-gradient(90deg, #ef4444, #f97316);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .area {
-  color: #555;
-  font-size: 15px;
+  color: #475569;
+  font-weight: 500;
 }
 
-/* ===== QUICK INFO ===== */
+/* QUICK INFO - CARD STYLE */
 .quickInfo {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -59,148 +74,177 @@
 }
 
 .quickInfo div {
-  background: #ffffff;
-  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(226, 232, 240, 0.6);
   padding: 14px;
+  border-radius: 14px;
   text-align: center;
-  font-weight: 500;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  transition: 0.2s;
+  font-weight: 700;
+  color: #334155;
+  transition: all 0.25s ease;
+  cursor: default;
 }
 
 .quickInfo div:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.1);
 }
 
-/* ===== CARD ===== */
+/* CARD SYSTEM */
 .card {
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  border-radius: 20px;
   padding: 22px;
-  border-radius: 16px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.06);
+  transition: 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 30px 70px rgba(15, 23, 42, 0.1);
 }
 
 .card h2 {
   font-size: 18px;
-  margin-bottom: 16px;
-  font-weight: 600;
+  font-weight: 800;
+  margin-bottom: 14px;
+  color: #0f172a;
 }
 
-/* ===== GRID ===== */
+/* GRID DETAIL */
 .grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, 1fr);
   gap: 14px;
 }
 
 .grid div {
-  background: #f9fafc;
-  padding: 12px;
-  border-radius: 10px;
+  background: #f8fafc;
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  transition: 0.2s;
+}
+
+.grid div:hover {
+  background: #fff;
+  transform: scale(1.02);
 }
 
 .grid span {
   display: block;
-  font-size: 13px;
-  color: #888;
+  font-size: 12px;
+  color: #64748b;
+  margin-bottom: 4px;
 }
 
 .grid b {
-  font-size: 15px;
+  font-size: 14px;
+  color: #0f172a;
 }
 
-/* ===== STATUS ===== */
+/* STATUS BADGE */
 .available {
-  color: #2e7d32;
+  color: #16a34a;
+  font-weight: 700;
 }
 
 .sold {
-  color: #d32f2f;
+  color: #ef4444;
+  font-weight: 700;
 }
 
-/* ===== SIDEBAR ===== */
+/* SIDEBAR */
 .sidebar {
   position: sticky;
-  top: 90px;
-  height: fit-content;
+  top: 24px;
 }
 
-/* ===== CONTACT BOX ===== */
 .contactBox {
-  background: #ffffff;
-  padding: 20px;
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-}
-
-/* USER */
-.user {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.user img {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.user p {
-  font-weight: 600;
-}
-
-.user span {
-  font-size: 13px;
-  color: #777;
-}
-
-/* ===== BUTTON ===== */
-.callBtn,
-.zaloBtn {
-  width: 100%;
-  margin-top: 14px;
-  padding: 14px;
-  border: none;
-  border-radius: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.callBtn {
-  background: #e53935;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  border-radius: 22px;
+  padding: 22px;
   color: white;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+/* glow effect */
+.contactBox::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.08), transparent 60%);
+  transform: rotate(25deg);
+}
+
+.contactTitle {
+  font-size: 13px;
+  opacity: 0.7;
+  margin-bottom: 6px;
+}
+
+.contactName {
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 16px;
+}
+
+/* BUTTON */
+.callBtn {
+  width: 100%;
+  padding: 13px;
+  border-radius: 14px;
+  border: none;
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+  color: white;
+  font-weight: 800;
+  cursor: pointer;
+  transition: 0.25s;
+  position: relative;
+  z-index: 1;
 }
 
 .callBtn:hover {
-  background: #d32f2f;
-  transform: translateY(-1px);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(34, 197, 94, 0.3);
 }
 
-.zaloBtn {
-  background: #0a68fe;
-  color: white;
+/* LOADING */
+.loading,
+.error {
+  text-align: center;
+  padding: 60px;
+  font-size: 16px;
 }
 
-.zaloBtn:hover {
-  background: #0957d1;
-  transform: translateY(-1px);
+.error {
+  color: #ef4444;
 }
 
-/* ===== NOTE ===== */
+/* FOOT NOTE */
 .note {
   text-align: center;
-  color: #777;
-  margin-top: 30px;
+  margin-top: 40px;
   font-size: 13px;
+  color: #94a3b8;
 }
 
-/* ===== RESPONSIVE ===== */
-@media (max-width: 1024px) {
+/* RESPONSIVE */
+@media (max-width: 900px) {
   .container {
     grid-template-columns: 1fr;
+  }
+
+  .quickInfo {
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .sidebar {
@@ -208,12 +252,3 @@
   }
 }
 
-@media (max-width: 640px) {
-  .quickInfo {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .header h1 {
-    font-size: 22px;
-  }
-}

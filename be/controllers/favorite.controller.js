@@ -3,6 +3,34 @@ const prisma = require("../libs/prisma");
 // ==============================
 // GET FAVORITES
 // ==============================
+// const getFavorites = async (req, res) => {
+//   try {
+//     const { userId } = req.params;
+
+//     const favorites = await prisma.favorite.findMany({
+//       where: {
+//         userId: Number(userId),
+//       },
+//     });
+
+//     // chỉ lấy propertyId
+//     const favoriteIds = favorites.map((item) =>
+//       String(item.propertyId)
+//     );
+
+//     return res.status(200).json({
+//   message: "Success",
+//   data: favoriteIds,
+// });
+//   } catch (error) {
+//     console.error(error);
+
+//     return res.status(500).json({
+//       message: "Lỗi lấy favorites",
+//     });
+//   }
+// };
+
 const getFavorites = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -11,17 +39,18 @@ const getFavorites = async (req, res) => {
       where: {
         userId: Number(userId),
       },
+
+      include: {
+        property: true,
+      },
     });
 
-    // chỉ lấy propertyId
-    const favoriteIds = favorites.map((item) =>
-      String(item.propertyId)
-    );
+    const properties = favorites.map((item) => item.property);
 
     return res.status(200).json({
-  message: "Success",
-  data: favoriteIds,
-});
+      message: "Success",
+      data: properties,
+    });
   } catch (error) {
     console.error(error);
 
@@ -38,7 +67,7 @@ const toggleFavorite = async (req, res) => {
   try {
     const userId = req.user.id;
 
-  const { propertyId } = req.body;
+    const { propertyId } = req.body;
 
     // kiểm tra đã tồn tại chưa
     const exists = await prisma.favorite.findFirst({
@@ -72,9 +101,7 @@ const toggleFavorite = async (req, res) => {
       },
     });
 
-    const favoriteIds = favorites.map((item) =>
-      String(item.propertyId)
-    );
+    const favoriteIds = favorites.map((item) => String(item.propertyId));
 
     return res.status(200).json({
       message: "Updated",
